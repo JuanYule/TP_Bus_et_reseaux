@@ -35,34 +35,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := TP_reseaux
+BUILD_ARTIFACT_NAME := TP_Bus_reseaux
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-TP_reseaux.elf \
+TP_Bus_reseaux.elf \
 
 MAP_FILES += \
-TP_reseaux.map \
+TP_Bus_reseaux.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-TP_reseaux.list \
+TP_Bus_reseaux.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: TP_reseaux.elf secondary-outputs
+main-build: TP_Bus_reseaux.elf secondary-outputs
 
 # Tool invocations
-TP_reseaux.elf TP_reseaux.map: $(OBJS) $(USER_OBJS) /home/yule/STM32CubeIDE/workspace_yule/TP_reseaux/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "TP_reseaux.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/yule/STM32CubeIDE/workspace_yule/TP_reseaux/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TP_reseaux.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+TP_Bus_reseaux.elf TP_Bus_reseaux.map: $(OBJS) $(USER_OBJS) /home/yule/Documents/ENSEA/Ensea\ 2022-2023/bus\ et\ réseaux\ industriels/TP/TP_Bus_reseaux/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "TP_Bus_reseaux.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/yule/Documents/ENSEA/Ensea 2022-2023/bus et réseaux industriels/TP/TP_Bus_reseaux/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TP_Bus_reseaux.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -71,14 +71,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-TP_reseaux.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "TP_reseaux.list"
+TP_Bus_reseaux.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "TP_Bus_reseaux.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) TP_reseaux.elf TP_reseaux.list TP_reseaux.map default.size.stdout
+	-$(RM) TP_Bus_reseaux.elf TP_Bus_reseaux.list TP_Bus_reseaux.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
