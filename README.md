@@ -9,4 +9,4 @@ machine virtuel python:
 
 source /dossier/bin/activate
 
-![Structure du projet](https://github.com/JuanYule/TP_Bus_et_reseaux/images/TP_complet.png "Structure du projet")
+![Structure du projet](/images/TP_complet.png "Structure du projet")
