@@ -6,7 +6,7 @@ from fonctions import *
 import time
 
 userCommand = '' #stokage de la valeur 
-command_list = ['GET_T', 'GET_P', 'GET_K', 'GET_A', 'SET_K=1234', 'exit', 'EXIT']
+command_list = ['GET_T', 'GET_P', 'GET_K', 'GET_A', 'SET_K', 'exit', 'EXIT']
 
 while True:
     try:

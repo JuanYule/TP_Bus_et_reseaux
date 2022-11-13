@@ -10,7 +10,7 @@ import sys
 #montre tous les ports connectes 
 myports = [tuple(p) for p in list(serial.tools.list_ports.comports())]
 
-SERIAL_PORT = '/dev/tnt0'
+SERIAL_PORT = '/dev/ttyUSB0'
 
 # port_serial = [port for port in myports if SERIAL_PORT in port ][0]
 
@@ -24,7 +24,7 @@ ser = serial.Serial(
 )
 
 def receptionRx():
-    t_end = time.time() + 10 # secondes à attendre pour recevoir le message apres de la commande GET
+    t_end = time.time() + 2 # secondes à attendre pour recevoir le message apres de la commande GET
     flag = 0
     while time.time() < t_end:
         bytesToRead = ser.in_waiting
@@ -36,11 +36,11 @@ def receptionRx():
             ser.reset_input_buffer()
     #         res = ser.readline()
     #         return res
-    if(flag == 0):
-        ser.reset_input_buffer()
-        print('\On ne peut pas recevoir des donnes de la STM32\n\r') 
-    else:
-        pass
+    # if(flag == 0):
+    #     ser.reset_input_buffer()
+    #     print('\On ne peut pas recevoir des donnes de la STM32\n\r') 
+    # else:
+    #     pass
 
 # def check_presence(correct_port, interval=0.1):
 #     while True:
@@ -60,38 +60,46 @@ def verification(user_Command):
         GET_K(user_Command)
     elif(user_Command == 'GET_A'):
         GET_A(user_Command)
-    elif(user_Command == 'SET_K=1234'):
+    elif(user_Command == 'SET_K'):
         SET_K(user_Command)
     else:
         return 0
+    
+def send_character(string):
+    to_array = [char for char in string]
+    print(to_array)
+    for x in string:
+        ser.write(x.encode())
+        time.sleep(0.1)
+    print('Transmition raspberry fini')
 
 def GET_T(data):
     ''' GET temperature'''
-    ser.write(data.encode())  #envoie le string GET_T
+    send_character(data)
+    print('Valeur de la temperature est :')
     receptionRx()
-    print('Temperature')
 
 def GET_P(data):
     ''' GET pressure'''
-    ser.write(data.encode())  #envoie le string GET_P
-    print('Pressure')
+    send_character(data)  #envoie le string GET_P
+    print('La pressure est:')
+    receptionRx()
     
 def GET_K(data):
     '''Coefficient K sur 10 caractères'''
-    ser.write(data.encode())  #envoie le string GET_K
-    print('Coefficient K')
+    send_character(data)  #envoie le string GET_K
+    print('Coefficient K est :')
+    receptionRx()
 
 def GET_A(data):
     ''' Angle sur 10 caractères'''
-    ser.write(data.encode())  #envoie le string GET_A
-    print('Angle')
+    send_character(data)  #envoie le string GET_A
+    print("l'angle est:")
+    receptionRx()
 
 def SET_K(data):
     ''' Fixe le coefficient K (en 1/100e)'''
-    ser.write(data.encode())  #envoie le string SET_K
-    print('Coefficient K 1/100e')
+    send_character(data)  #envoie le string SET_K
+    print('Coefficient K 1/100e est:')
+    receptionRx()
 
-#Verification si le port seriel est brache
-# port_controller = threading.Thread(target=check_presence, args=(0.1,))
-# port_controller.setDaemon(True)
-# port_controller.start()
