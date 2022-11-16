@@ -36,6 +36,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define SIZE_REQUETE 10
+#define ID_MESSAGE_CAN 0x61 //two valid values 0x60 (manual mode) 0x61 (angle mode)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -48,8 +49,11 @@ CAN_HandleTypeDef hcan1;
 
 I2C_HandleTypeDef hi2c1;
 
+TIM_HandleTypeDef htim13;
+
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
+DMA_HandleTypeDef hdma_usart3_rx;
 
 /* USER CODE BEGIN PV */
 uint8_t data[6];
@@ -73,15 +77,39 @@ int16_t dig_P9;
 uint8_t Rx_rasp_to_nucleo = 1;
 char requete[SIZE_REQUETE] = {'\0'};
 int flag = 0;
+
+//Variables reception Rx UART1
+uint8_t Rx_byte;
+char Rx_data[SIZE_REQUETE] = {'\0'};
+int int_temp, dec_temp;
+uint8_t Rx_indx = 0;
+BMP280_U32_t send_temp, send_press; //valeurs a envoyer quand la raspberry demande un request
+
+char send_t_1[2];
+char send_t_2[2];
+
+char send_p[2];
+
+char t_display [10];
+char p_display [10];
+
+////Structure Header bus CAN
+CAN_TxHeaderTypeDef pHeader;
+uint8_t aData[2]= {0x01,0x00};
+uint32_t pTxMailbox;
+int incr = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART3_UART_Init(void);
+static void MX_TIM13_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -184,17 +212,16 @@ BMP280_U32_t bmp280_compensate_P_int32(BMP280_S32_t adc_P)
 	return p;
 }
 
-void read_temp()
+BMP280_S32_t read_temp()
 {
 	uint8_t addr_temp_press = 0xF7;
 	//On uilise 6 posiion car des addres pour la press sont 0XF7, 0XF8, 0XF9 et pour la temp sont 0XFA, 0XFB, 0XFC
 	//Donc on as besoin de 6 octects pour stocke les informations
 	uint8_t data_temp_press[6];
 	uint32_t temperature;
-	uint32_t pressure;
+	//	uint32_t pressure;
 
 	BMP280_S32_t temp_compensation;
-	BMP280_U32_t press_compensation;
 
 	HAL_I2C_Master_Transmit(&hi2c1, addr_BMP280, &addr_temp_press, 1, HAL_MAX_DELAY);
 	HAL_I2C_Master_Receive(&hi2c1, addr_BMP280, data_temp_press, 6, HAL_MAX_DELAY);
@@ -204,20 +231,21 @@ void read_temp()
 	//	}
 
 	//On stocke des valeur dans le registre «data_temp_press»
-//	pressure = (data_temp_press[0]<<12)|(data_temp_press[1]<<4)|(data_temp_press[2]>>4);
 	temperature = (data_temp_press[3]<<12)|(data_temp_press[4]<<4)|(data_temp_press[5]>>4);
 
-//	printf("Valeur de la pression = 0x%lx, deci = %d \n\r",pressure, pressure);
-//	printf("Valeur de la temperature = 0x%lx, deci = %d \n\r",temperature, temperature);
+	//	printf("Valeur de la pression = 0x%lx, deci = %d \n\r",pressure, pressure);
+	//	printf("Valeur de la temperature = 0x%lx, deci = %d \n\r",temperature, temperature);
 
-//	press_compensation=bmp280_compensate_P_int32(pressure);
+	//	press_compensation=bmp280_compensate_P_int32(pressure);
 	temp_compensation = bmp280_compensate_T_int32(temperature);
-	printf("T=+%2d.%2d_C \r\n",(int)(temp_compensation/100),temp_compensation%100);
-//	printf("Pressure value compensated = %d.%d hPa\n\r",(int)(press_compensation/100),(press_compensation%100));
-//	printf("Temperature value compensated = %d.%d_C\n\r",(int)(temp_compensation/100),temp_compensation%100);;
+	//printf("T=+%2d.%2d_C \r\n",(int)(temp_compensation/100),temp_compensation%100);
+
+	return temp_compensation;
+	//	printf("Pressure value compensated = %d.%d hPa\n\r",(int)(press_compensation/100),(press_compensation%100));
+	//	printf("Temperature value compensated = %d.%d_C\n\r",(int)(temp_compensation/100),temp_compensation%100);;
+	//	return temp_compensation;
 }
-/* USER CODE END 0 */
-void read_press()
+BMP280_U32_t read_press()
 {
 	uint8_t addr_temp_press = 0xF7;
 	//On uilise 6 posiion car des addres pour la press sont 0XF7, 0XF8, 0XF9 et pour la temp sont 0XFA, 0XFB, 0XFC
@@ -238,7 +266,102 @@ void read_press()
 	pressure = (data_temp_press[0]<<12)|(data_temp_press[1]<<4)|(data_temp_press[2]>>4);
 	press_compensation=bmp280_compensate_P_int32(pressure);
 	printf("P=%10dPa \r\n", (int)(press_compensation/100));
+	return press_compensation;
 }
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if (huart->Instance == USART3) { // Current UART
+		Rx_data[Rx_indx++] = Rx_byte;    // Add data to Rx_Buffer
+	}
+
+	if (strcmp(Rx_data,"GET_T") == 0)
+	{
+		//send_temp = read_temp();
+		int_temp = send_temp/100;
+		dec_temp = send_temp % 100;
+		sprintf(send_t_1, "%d", int_temp);
+		sprintf(send_t_2, "%d", dec_temp);
+		strcat(t_display, "T=+");
+		strcat(p_display, ".");
+		strcat(t_display, strcat(send_t_1,strcat(p_display,strcat(send_t_2,"_C"))));
+		printf("T=+%d.%d_C \r\n",int_temp, dec_temp);
+		HAL_UART_Transmit(&huart3, (uint8_t*)&t_display, strlen(t_display), HAL_MAX_DELAY);
+		memset(Rx_data, 0, SIZE_REQUETE);
+		Rx_indx = 0;
+	}
+	else if (strcmp(Rx_data,"GET_P") == 0)
+	{
+		HAL_UART_Transmit(&huart3, (uint8_t*)&Rx_data, strlen(Rx_data), HAL_MAX_DELAY);
+		memset(Rx_data, 0, SIZE_REQUETE);
+		Rx_indx = 0;
+	}
+	else if (strcmp(Rx_data,"GET_K") == 0)
+	{
+		HAL_UART_Transmit(&huart3, (uint8_t*)&Rx_data, strlen(Rx_data), HAL_MAX_DELAY);
+		memset(Rx_data, 0, SIZE_REQUETE);
+		Rx_indx = 0;
+	}
+	else if (strcmp(Rx_data,"GET_A") == 0)
+	{
+		HAL_UART_Transmit(&huart3, (uint8_t*)&Rx_data, strlen(Rx_data), HAL_MAX_DELAY);
+		memset(Rx_data, 0, SIZE_REQUETE);
+		Rx_indx = 0;
+	}
+	else if (strcmp(Rx_data,"SET_K") == 0)
+	{
+		HAL_UART_Transmit(&huart3, (uint8_t*)&Rx_data, strlen(Rx_data), HAL_MAX_DELAY);
+		memset(Rx_data, 0, SIZE_REQUETE);
+		Rx_indx = 0;
+	}
+	HAL_UART_Receive_DMA(&huart3, &Rx_byte, 1);
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim){
+	if (htim->Instance == TIM13)
+	{
+
+		HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+		//		if(incr==1){
+		send_temp = read_temp();
+		printf("T=+%2d.%2d_C \r\n",(int)(send_temp/100),send_temp%100);
+		int_temp = (send_temp/100)*10;
+		aData[1]=0x01;
+		aData[0]=int_temp;
+		incr =0;
+		//		}
+		//		else{
+		////			aData[1] = 0x00;
+		////			aData[0] = 0x5A;
+		//		}
+		HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
+		incr = 1;
+	}
+}
+
+void config_CAN(){
+	//CAN configuration
+	aData[0] = 0x00;
+	aData[1] = 0x00;
+	pHeader.StdId = ID_MESSAGE_CAN;
+	//pHeader.ExtId =0x000;
+	pHeader.IDE = CAN_ID_STD;
+	pHeader.RTR = CAN_RTR_DATA;
+	pHeader.DLC = 2;
+	pHeader.TransmitGlobalTime = DISABLE;
+}
+
+void config_CAN_set0(){
+	//CAN configuration
+	pHeader.StdId = 0x62;
+	//pHeader.ExtId =0x000;
+	pHeader.IDE = CAN_ID_STD;
+	pHeader.RTR = CAN_RTR_DATA;
+	pHeader.DLC = 2;
+	pHeader.TransmitGlobalTime = DISABLE;
+}
+/* USER CODE END 0 */
+
 /**
  * @brief  The application entry point.
  * @retval int
@@ -267,10 +390,12 @@ int main(void)
 
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
+	MX_DMA_Init();
 	MX_USART2_UART_Init();
 	MX_CAN1_Init();
 	MX_I2C1_Init();
 	MX_USART3_UART_Init();
+	MX_TIM13_Init();
 	/* USER CODE BEGIN 2 */
 
 	//Configuration du capteur BMP280
@@ -282,71 +407,72 @@ int main(void)
 
 	read_temp();
 
+	// On active UART avec le DMA, on va recevoir un seul byte
+	HAL_UART_Receive_DMA(&huart3, &Rx_byte, 1); //On
+
+	//init Timer 13
+	HAL_TIM_Base_Start_IT(&htim13);
+	HAL_CAN_Start(&hcan1); //init bus CAN
+
+	//config_CAN_set0();
+
+	config_CAN(); //Fonction pour faire la conf du bus CAN
+	HAL_CAN_AddTxMessage(&hcan1, &pHeader, aData, &pTxMailbox);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
-		// Test UART avec I2C
-		//printf("hello\r\n");
-		//HAL_Delay(1000);
-		//id_BMP280();
+		//		if (HAL_UART_Receive(&huart3, &Rx_rasp_to_nucleo, 1, 1000)==HAL_OK) {
 		//
-
-		//id_BMP280();
-		//		HAL_UART_Transmit(&huart3, pData, Size, Timeout)
-
-
-		if (HAL_UART_Receive(&huart3, &Rx_rasp_to_nucleo, 1, 1000)==HAL_OK) {
-
-			if (Rx_rasp_to_nucleo==0x0D) {
-//				printf("Data = %s \r\n", requete);
-				flag=0;
-				if (strcmp(&requete,"GET_T")==0) {
-//					printf("ok = GET_T \r\n");
-					read_temp();
-					memset(requete, 0, SIZE_REQUETE);
-				}else if (strcmp(&requete,"GET_P")==0) {
-//					printf("ok = GET_P \r\n");
-					read_press();
-					memset(requete, 0, SIZE_REQUETE);
-				}
-				else if (strcmp(&requete,"GET_K")==0) {
-//					printf("ok = GET_K \r\n");
-					memset(requete, 0, SIZE_REQUETE);
-				}
-				else if (strcmp(&requete,"GET_A")==0){
-//					printf("ok = GET_A \r\n");
-					memset(requete, 0, SIZE_REQUETE);
-				}
-				else if (strcmp(&requete,"GET_K=1234")==0){
-//					printf("ok = GET_K=1234 \r\n");
-					memset(requete, 0, SIZE_REQUETE);
-				}
-				else{
-					printf("Requête non reconnue \r\n");
-					memset(requete, 0, SIZE_REQUETE);
-				}
-			}else {
-				if (flag > sizeof(requete)-1) {
-					flag=0;
-					memset(requete, 0, SIZE_REQUETE);
-				}
-				requete[flag]=Rx_rasp_to_nucleo;
-				flag++;
-				//				if (flag >= 5) {
-				//					flag=0;
-				//					printf("Requete trop longue \r\n");
-				//				}
-				//				requete[flag]=Rx_rasp_to_nucleo;
-				//				flag++;
-			}
-			//printf("ok");
-			//			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-			//			HAL_Delay(500);
-
-		}
+		//			if (Rx_rasp_to_nucleo==0x0D) {
+		////				printf("Data = %s \r\n", requete);
+		//				flag=0;
+		//				if (strcmp(&requete,"GET_T")==0) {
+		////					printf("ok = GET_T \r\n");
+		//					read_temp();
+		//					memset(requete, 0, SIZE_REQUETE);
+		//				}else if (strcmp(&requete,"GET_P")==0) {
+		////					printf("ok = GET_P \r\n");
+		//					read_press();
+		//					memset(requete, 0, SIZE_REQUETE);
+		//				}
+		//				else if (strcmp(&requete,"GET_K")==0) {
+		////					printf("ok = GET_K \r\n");
+		//					memset(requete, 0, SIZE_REQUETE);
+		//				}
+		//				else if (strcmp(&requete,"GET_A")==0){
+		////					printf("ok = GET_A \r\n");
+		//					memset(requete, 0, SIZE_REQUETE);
+		//				}
+		//				else if (strcmp(&requete,"GET_K=1234")==0){
+		////					printf("ok = GET_K=1234 \r\n");
+		//					memset(requete, 0, SIZE_REQUETE);
+		//				}
+		//				else{
+		//					printf("Requête non reconnue \r\n");
+		//					memset(requete, 0, SIZE_REQUETE);
+		//				}
+		//			}else {
+		//				if (flag > sizeof(requete)-1) {
+		//					flag=0;
+		//					memset(requete, 0, SIZE_REQUETE);
+		//				}
+		//				requete[flag]=Rx_rasp_to_nucleo;
+		//				flag++;
+		//				//				if (flag >= 5) {
+		//				//					flag=0;
+		//				//					printf("Requete trop longue \r\n");
+		//				//				}
+		//				//				requete[flag]=Rx_rasp_to_nucleo;
+		//				//				flag++;
+		//			}
+		//			//printf("ok");
+		//			//			HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+		//			//			HAL_Delay(500);
+		//
+		//		}
 
 		//		printf("Data = %x", Rx_rasp_to_nucleo);
 
@@ -379,9 +505,9 @@ void SystemClock_Config(void)
 	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
 	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
 	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-	RCC_OscInitStruct.PLL.PLLM = 16;
-	RCC_OscInitStruct.PLL.PLLN = 336;
-	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
+	RCC_OscInitStruct.PLL.PLLM = 8;
+	RCC_OscInitStruct.PLL.PLLN = 80;
+	RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
 	RCC_OscInitStruct.PLL.PLLQ = 2;
 	RCC_OscInitStruct.PLL.PLLR = 2;
 	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -423,8 +549,8 @@ static void MX_CAN1_Init(void)
 	hcan1.Init.Prescaler = 16;
 	hcan1.Init.Mode = CAN_MODE_NORMAL;
 	hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-	hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
-	hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+	hcan1.Init.TimeSeg1 = CAN_BS1_2TQ;
+	hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
 	hcan1.Init.TimeTriggeredMode = DISABLE;
 	hcan1.Init.AutoBusOff = DISABLE;
 	hcan1.Init.AutoWakeUp = DISABLE;
@@ -472,6 +598,37 @@ static void MX_I2C1_Init(void)
 	/* USER CODE BEGIN I2C1_Init 2 */
 
 	/* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+ * @brief TIM13 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_TIM13_Init(void)
+{
+
+	/* USER CODE BEGIN TIM13_Init 0 */
+
+	/* USER CODE END TIM13_Init 0 */
+
+	/* USER CODE BEGIN TIM13_Init 1 */
+
+	/* USER CODE END TIM13_Init 1 */
+	htim13.Instance = TIM13;
+	htim13.Init.Prescaler = 9999;
+	htim13.Init.CounterMode = TIM_COUNTERMODE_UP;
+	htim13.Init.Period = 8000;
+	htim13.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	htim13.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	if (HAL_TIM_Base_Init(&htim13) != HAL_OK)
+	{
+		Error_Handler();
+	}
+	/* USER CODE BEGIN TIM13_Init 2 */
+
+	/* USER CODE END TIM13_Init 2 */
 
 }
 
@@ -542,6 +699,22 @@ static void MX_USART3_UART_Init(void)
 }
 
 /**
+ * Enable DMA controller clock
+ */
+static void MX_DMA_Init(void)
+{
+
+	/* DMA controller clock enable */
+	__HAL_RCC_DMA1_CLK_ENABLE();
+
+	/* DMA interrupt init */
+	/* DMA1_Stream1_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0, 0);
+	HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
+
+}
+
+/**
  * @brief GPIO Initialization Function
  * @param None
  * @retval None
@@ -557,20 +730,20 @@ static void MX_GPIO_Init(void)
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 
-	/*Configure GPIO pin : B1_Pin */
-	GPIO_InitStruct.Pin = B1_Pin;
+	/*Configure GPIO pin : Button_Pin */
+	GPIO_InitStruct.Pin = Button_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
+	HAL_GPIO_Init(Button_GPIO_Port, &GPIO_InitStruct);
 
-	/*Configure GPIO pin : LD2_Pin */
-	GPIO_InitStruct.Pin = LD2_Pin;
+	/*Configure GPIO pin : LED_Pin */
+	GPIO_InitStruct.Pin = LED_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+	HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
 }
 

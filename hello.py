@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import jsonify, render_template, abort, request
 import json
+from fonctions import *
 
 app = Flask(__name__)
 
@@ -9,6 +10,7 @@ def hello_world():
     return 'Hello, World!\n'
 
 welcome = "Welcome to 3ESE API!"
+temperature = []
 
 @app.route('/api/welcome/', methods=['GET', 'POST', 'DELETE'])
 def api_welcome():
@@ -54,6 +56,21 @@ def api_request(path=None):
                 "data" : request.get_json(),
                 }
     return jsonify(resp)
+    
+    
+@app.route('/temp/', methods=['GET', 'POST'])
+def functio_temp():
+    global temperature
+    if request.method == 'GET':
+        verification("GET_T")
+        send_to_rasp = ''.join(data_temp)
+        return jsonify({"text":data_test})
+
+@app.route('/temp/<int:index>', methods=['GET', 'POST', ])
+
+@app.route('/pres/', methods=['GET', 'DELETE', ])
+
+@app.route('/pres/<int:index>', methods=['GET', 'DELETE', ])
 
 @app.errorhandler(404)
 def page_not_found(error):

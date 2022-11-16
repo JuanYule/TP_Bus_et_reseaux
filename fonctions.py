@@ -10,8 +10,10 @@ import sys
 #montre tous les ports connectes 
 myports = [tuple(p) for p in list(serial.tools.list_ports.comports())]
 
-SERIAL_PORT = '/dev/ttyUSB0'
+SERIAL_PORT = '/dev/ttyAMA0'
 
+data_temp = []
+data_test = 'HELLLOOOOO'
 # port_serial = [port for port in myports if SERIAL_PORT in port ][0]
 
 #Configuration du port serial
@@ -24,6 +26,7 @@ ser = serial.Serial(
 )
 
 def receptionRx():
+    global data_temp
     t_end = time.time() + 2 # secondes à attendre pour recevoir le message apres de la commande GET
     flag = 0
     while time.time() < t_end:
@@ -32,23 +35,10 @@ def receptionRx():
         if(bytesToRead > 0):
             flag = 1
             res = ser.read(bytesToRead)
+            data_temp.append(res.decode('utf-8'))
             print(res.decode('utf-8'))
             ser.reset_input_buffer()
-    #         res = ser.readline()
-    #         return res
-    # if(flag == 0):
-    #     ser.reset_input_buffer()
-    #     print('\On ne peut pas recevoir des donnes de la STM32\n\r') 
-    # else:
-    #     pass
-
-# def check_presence(correct_port, interval=0.1):
-#     while True:
-#         myports = [tuple(p) for p in list(serial.tools.list_ports.comports())]
-#         if port_serial not in myports:
-#             sys.exit("\nSerial port n'est pas branche!")
-#             break
-#         time.sleep(interval)
+            
 
 def verification(user_Command):
     # Verification de la commande du user
@@ -72,6 +62,7 @@ def send_character(string):
         ser.write(x.encode())
         time.sleep(0.1)
     print('Transmition raspberry fini')
+    print(data_temp)
 
 def GET_T(data):
     ''' GET temperature'''
