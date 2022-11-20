@@ -2,7 +2,7 @@
 ### Description
 Le but du tps est d'acquérir les données du capteur BMP280 par le STM32 et ensuite de contrôler ces données par une interface API.
 La figure suivante illustre l'architecture générale du système :
-![Structure du projet](/images/TP_complet.png "Structure du projet")
+![Structure du projet](/img/TP_complet.png "Structure du projet")
 
 
 
@@ -14,10 +14,10 @@ La figure suivante illustre l'architecture générale du système :
 5. 
 ## TP1
 Interrogation des capteurs par le bus I²2C
- ![architecture_TP1](/images/architecture_TP1.png "Architecture TP1")
+ ![architecture_TP1](/img/architecture_TP1.png "Architecture TP1")
 ## TP2
 Interfaçage STM32 <-> Raspberry Pi
- ![architecture_TP2](/images/architecture_TP2.png "Architecture TP2")
+ ![architecture_TP2](/img/architecture_TP2.png "Architecture TP2")
 
 |   Requête du RPi     |   Réponse du STM    | Commentaire |
 | :------------: |:---------------:| :-----:|
@@ -41,4 +41,4 @@ Interface Web sur Raspberry Pi
 
 ## TP4
 Interface API Rest & pilotage d'actionneur par bus CAN
- ![architecture_TP4](/images/architecture_TP4.png "Architecture TP4")
+ ![architecture_TP4](/img/architecture_TP4.png "Architecture TP4")
