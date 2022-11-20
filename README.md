@@ -7,10 +7,10 @@ La figure suivante illustre l'architecture générale du système :
 
 
 **Table of Contents**
-1. [TP1-Bis I2C](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP1)
-2. [TP2-Interfaçage STM32 - Raspberry](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP2)
-3. [TP3-Interface REST](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP3)
-4. [TP4-Bus CAN](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP4)
+1. [TP1-Bis I2C](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp1-bus-i2c)
+2. [TP2-Interfaçage STM32 - Raspberry](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp2-interfaçage-stm32---raspberry)
+3. [TP3-Interface REST](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp3-interface-rest)
+4. [TP4-Bus CAN](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp4-bus-can)
 
 ## TP1 Bus I2C
 Interrogation des capteurs par le bus I²2C
@@ -55,4 +55,5 @@ Interface Web sur Raspberry Pi
 
 ## TP4 Bus CAN
 Interface API Rest & pilotage d'actionneur par bus CAN
- ![architecture_TP4](/img/architecture_TP4.png "Architecture TP4")
+
+![architecture_TP4](/img/architecture_TP4.png "Architecture TP4")
