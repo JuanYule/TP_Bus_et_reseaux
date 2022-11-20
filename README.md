@@ -7,10 +7,10 @@ La figure suivante illustre l'architecture générale du système :
 
 
 **Table of Contents**
-1. [TP1](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP1)
-2. [TP2](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP2)
-3. [TP3](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP3)
-4. [TP4](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP4)
+1. [TP1-Bis I2C](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP1)
+2. [TP2-Interfaçage STM32 - Raspberry](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP2)
+3. [TP3-Interface REST](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP3)
+4. [TP4-Bus CAN](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP4)
 
 ## TP1 Bus I2C
 Interrogation des capteurs par le bus I²2C
@@ -26,7 +26,10 @@ Interrogation des capteurs par le bus I²2C
  5. Les registres contenant la température du composant sont nommés « temp » et sont aux adresses allant de 0xFA à 0xFC. Le format de la donnée est unsigned sur 20 bits, ut[19 :0].
  6. Les registres contenant la pression du composant sont nommés « press » et sont aux adresses allant de 0xF7 à 0xF9. Le format de la donnée est unsigned sur 20 bits, up[19 :0].
  7. Les fonctions permettant le calcul de la température et de la pression compensées en format entier 32 bits sont à la page 45 et 46 de la datasheet.
-## TP2
+
+ ### Setup du STM32
+
+## TP2 Interfaçage STM32 - Raspberry
 Interfaçage STM32 <-> Raspberry Pi
  ![architecture_TP2](/img/architecture_TP2.png "Architecture TP2")
 
@@ -38,7 +41,7 @@ Interfaçage STM32 <-> Raspberry Pi
 | GET_K      | K=12.34000 |   Coefficient K sur 10 caractères          |
 | GET_A      | A=125.7000 |    Angle sur 10 caractères                 |
 
-## TP3
+## TP3 Interface REST
 Interface Web sur Raspberry Pi
 |   CRUB     |   Réponse du STM    | Commentaire |
 | :------------: |:---------------:| :-----:|
@@ -50,6 +53,6 @@ Interface Web sur Raspberry Pi
 | Delete   | DELETE| welcome/x | Delete letter at position x |
 | Delete   | DELETE| welcome/  | Delete sentece |
 
-## TP4
+## TP4 Bus CAN
 Interface API Rest & pilotage d'actionneur par bus CAN
  ![architecture_TP4](/img/architecture_TP4.png "Architecture TP4")
