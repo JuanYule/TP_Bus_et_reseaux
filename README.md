@@ -11,10 +11,21 @@ La figure suivante illustre l'architecture générale du système :
 2. [TP2](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP2)
 3. [TP3](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP3)
 4. [TP4](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#TP4)
-5. 
-## TP1
+
+## TP1 Bus I2C
 Interrogation des capteurs par le bus I²2C
  ![architecture_TP1](/img/architecture_TP1.png "Architecture TP1")
+
+ Le BMP280 est un capteur de pression et température développé par Bosch (page produit).
+
+ A partir de la datasheet du BMP280, nous avons determiné les éléments suivantes:
+ 1. Les adresses I²C possibles pour ce composant sont sur 7 bits. Si on connecte la broche SDO au GND, l’adresse du composant est 111 0110 (0x76). Si la broche est connectée à Vddio, c’est 111 0111 (0x77)
+ 2. Le registre permettant d’identifier ce composant est nommé « id » dont l’adresse est 0xD0. Sa valeur est 0x58 et peut être lue dès que le composant est sous tension 
+ 3. Le registre permettant de placer le composant en mode NORMAL est le « ctrl_meas» et son adresse est 0xF4. Il faut mettre les bits de valeur 11 dans mode [1 :0]
+ 4. Les registres contenant l’étalonnage du composant sont à l’adresse 0x88 à l’adresse 0xA1
+ 5. Les registres contenant la température du composant sont nommés « temp » et sont aux adresses allant de 0xFA à 0xFC. Le format de la donnée est unsigned sur 20 bits, ut[19 :0].
+ 6. Les registres contenant la pression du composant sont nommés « press » et sont aux adresses allant de 0xF7 à 0xF9. Le format de la donnée est unsigned sur 20 bits, up[19 :0].
+ 7. Les fonctions permettant le calcul de la température et de la pression compensées en format entier 32 bits sont à la page 45 et 46 de la datasheet.
 ## TP2
 Interfaçage STM32 <-> Raspberry Pi
  ![architecture_TP2](/img/architecture_TP2.png "Architecture TP2")
