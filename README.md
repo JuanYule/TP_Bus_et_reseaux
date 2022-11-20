@@ -7,7 +7,7 @@ La figure suivante illustre l'architecture générale du système :
 
 
 **Table of Contents**
-1. https://github.com/JuanYule/TP_Bus_et_reseaux#TP1
+1. [TP1](https://github.com/JuanYule/TP_Bus_et_reseaux/edit/main/README#TP1)
 2. https://github.com/JuanYule/TP_Bus_et_reseaux#TP2
 3. https://github.com/JuanYule/TP_Bus_et_reseaux#TP3
 4. https://github.com/JuanYule/TP_Bus_et_reseaux#TP4
