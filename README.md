@@ -4,15 +4,13 @@ Le but du tps est d'acquérir les données du capteur BMP280 par le STM32 et ens
 La figure suivante illustre l'architecture générale du système :
 ![Structure du projet](/images/TP_complet.png "Structure du projet")
 
-![](https://pandao.github.io/editor.md/images/logos/editormd-logo-180x180.png)
 
-![](https://img.shields.io/github/stars/pandao/editor.md.svg) ![](https://img.shields.io/github/forks/pandao/editor.md.svg) ![](https://img.shields.io/github/tag/pandao/editor.md.svg) ![](https://img.shields.io/github/release/pandao/editor.md.svg) ![](https://img.shields.io/github/issues/pandao/editor.md.svg) ![](https://img.shields.io/bower/v/editor.md.svg)
 
 **Table of Contents**
-
-[TOCM]
-
-[TOC]
+1. https://github.com/JuanYule/TP_Bus_et_reseaux#TP1
+2. https://github.com/JuanYule/TP_Bus_et_reseaux#TP2
+3. https://github.com/JuanYule/TP_Bus_et_reseaux#TP3
+4. https://github.com/JuanYule/TP_Bus_et_reseaux#TP4
 
 ## TP1
 Interrogation des capteurs par le bus I²2C 
