@@ -1,12 +1,16 @@
-# TP_Bus_et_reseaux
-TP-Bus et reseaux industriels
+# TP:  Bus et réseaux industriels
+### Description
+Le but du tps est d'acquérir les données du capteur XX par le STM32 et ensuite de contrôler ces données par une interface API.
+La figure suivante illustre l'architecture générale du système :
+**Table of Contents**
 
-Notes:
+[TOCM]
 
-tty0tty => pour générer des ports virtuels
+[TOC]
 
-machine virtuel python:
-
-source /dossier/bin/activate
+## TP1
+## TP2
+## TP3
+## TP4
 
 ![Structure du projet](/images/TP_complet.png "Structure du projet")
