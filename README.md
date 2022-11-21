@@ -33,24 +33,24 @@ Interrogation des capteurs par le bus I²2C
 
 Dans cette partie, nous avons configure les broches pour configurer le Bus CAN, l'USART2 et l'USART3 et la communication I2C :
 
-|Pour la com bus CAN||
+|Pour la com bus CAN|
 | :------------: |:---------------:|
 | Rx | PB8 |
 | Tx | PB9 |
 
-|Pour l'USART 2||
+|Pour l'USART 2|
 | :------------: |:---------------:|
 | Rx | PA3 |
 | Tx | PA2 |
 
-|Pour l'USART 3||
+|Pour l'USART 3|
 | :------------: |:---------------:|
 | Rx | PC5 |
 | Tx | PB10 |
 
 Nous avons choisi pour la communciation I2C entre le capteur de temperature les pins suivantes:
 
-|Pour la cmmunication I2C||
+|Pour la cmmunication I2C|
 | :------------: |:---------------:|
 | SDA | PB7 |
 | SCL | PB6 |
