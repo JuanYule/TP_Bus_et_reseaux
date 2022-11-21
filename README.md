@@ -11,6 +11,7 @@ La figure suivante illustre l'architecture générale du système :
 2. [TP2-Interfaçage STM32 - Raspberry](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp2-interfaçage-stm32---raspberry)
 3. [TP3-Interface REST](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp3-interface-rest)
 4. [TP4-Bus CAN](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp4-bus-can)
+5. [Conclusion](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#conclusion)
 
 ## TP1 Bus I2C
 Interrogation des capteurs par le bus I²2C
@@ -30,6 +31,31 @@ Interrogation des capteurs par le bus I²2C
 
  ### Setup du STM32
 
+Dans cette partie, nous avons configure les broches pour configurer le Bus CAN, l'USART2 et l'USART3 et la communication I2C :
+
+|Pour la com bus CAN||
+| :------------: |:---------------:|
+| Rx | PB8 |
+| Tx | PB9 |
+
+|Pour l'USART 2||
+| :------------: |:---------------:|
+| Rx | PA3 |
+| Tx | PA2 |
+
+|Pour l'USART 3||
+| :------------: |:---------------:|
+| Rx | PC5 |
+| Tx | PB10 |
+
+Nous avons choisi pour la communciation I2C entre le capteur de temperature les pins suivantes:
+
+|Pour la cmmunication I2C||
+| :------------: |:---------------:|
+| SDA | PB7 |
+| SCL | PB6 |
+
+
 ## TP2 Interfaçage STM32 - Raspberry
 Interfaçage STM32 <-> Raspberry Pi
 
@@ -46,7 +72,7 @@ Interfaçage STM32 <-> Raspberry Pi
 ## TP3 Interface REST
 Interface Web sur Raspberry Pi
 |   CRUB     |   Réponse du STM    | Commentaire |
-| :------------: |:---------------:| :-----:|
+| :------------: |:---------------:|:-----:||:-----:|
 | Create   | POST  | welcome/  | Change sentence |
 | Retreive | GET   | welcome/  | Return sentence |
 | Retreive | GET   | welcome/x | Return letter x |
@@ -59,3 +85,5 @@ Interface Web sur Raspberry Pi
 Interface API Rest & pilotage d'actionneur par bus CAN
 
 ![architecture_TP4](/img/architecture_TP4.png "Architecture TP4")
+
+## Conclusion
