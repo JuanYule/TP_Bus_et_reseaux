@@ -14,7 +14,8 @@ La figure suivante illustre l'architecture générale du système :
 
 ## TP1 Bus I2C
 Interrogation des capteurs par le bus I²2C
- ![architecture_TP1](/img/architecture_TP1.png "Architecture TP1")
+
+![architecture_TP1](/img/architecture_TP1.png "Architecture TP1")
 
  Le BMP280 est un capteur de pression et température développé par Bosch (page produit).
 
@@ -31,7 +32,8 @@ Interrogation des capteurs par le bus I²2C
 
 ## TP2 Interfaçage STM32 - Raspberry
 Interfaçage STM32 <-> Raspberry Pi
- ![architecture_TP2](/img/architecture_TP2.png "Architecture TP2")
+
+![architecture_TP2](/img/architecture_TP2.png "Architecture TP2")
 
 |   Requête du RPi     |   Réponse du STM    | Commentaire |
 | :------------: |:---------------:| :-----:|
