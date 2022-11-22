@@ -70,7 +70,13 @@ Interfaçage STM32 <-> Raspberry Pi
 | GET_A      | A=125.7000 |    Angle sur 10 caractères                 |
 
 ## TP3 Interface REST
-Interface Web sur Raspberry Pi
+Dans cette partie, nous avons implémenté une interface Web sur Raspberry Pi. Tout d'abord, nous procédons à l'intallation du serveur Python
+```
+sudo adduser XXX
+sudo usermod -aG sudo XXX
+sudo usermod -aG dialout XXX
+
+```
 
 |   CRUB     |   Réponse du STM    | Commentaire ||
 | :------------: | :---------------: |:-----:| :-----: |
