@@ -70,13 +70,18 @@ Interfaçage STM32 <-> Raspberry Pi
 | GET_A      | A=125.7000 |    Angle sur 10 caractères                 |
 
 ## TP3 Interface REST
-Dans cette partie, nous avons implémenté une interface Web sur Raspberry Pi. Tout d'abord, nous procédons à l'intallation du serveur Python
-```
-sudo adduser XXX
-sudo usermod -aG sudo XXX
-sudo usermod -aG dialout XXX
+Dans cette partie, nous avons implémenté une interface Web sur Raspberry Pi. Tout d'abord, nous procédons à l'intallation et la vérification du serveur Python.
+Nous avons vérifié le hostname de la raspberry dans le fichier /etc hostname et c’est : raspberry6
+Puis, nous avons modifié le hostname du fichier /etc/hosts raspberry6 pour avoir le même nom, car nous avions un problème de sudo.
 
+Nous avons créé un profil nommé ramos à partir des commandes ci-dessous et nous nous sommes connectés à celui-ci :
 ```
+sudo adduser ramos
+sudo usermod -aG sudo ramos
+sudo usermod -aG dialout ramos
+```
+
+![user_ramos](/img/user_ramos.png "User Ramos")
 
 |   CRUB     |   Réponse du STM    | Commentaire ||
 | :------------: | :---------------: |:-----:| :-----: |
