@@ -13,6 +13,7 @@ La figure suivante illustre l'architecture générale du système :
 4. [TP4-Bus CAN](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp4-bus-can)
 5. [Conclusion](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#conclusion)
 
+
 ## TP1 Bus I2C
 Interrogation des capteurs par le bus I²2C
 
@@ -106,24 +107,41 @@ La constante ``` FLASK_ENV=development ``` permet de lancer un mode debug.
 Quand on ouvre un navigateur web et qu’on entre l’adresse publique, on obtient l’affichage suivant :
 
 ![serveur_web](/img/serveur_web.png "serveur web")
-## Première routage
+
+### Première routage
 Pour faire le prèmiere routage nous avons ajouté les lignes suivantes au fichier hello.py:
 ```
 @app.route('/api/welcome/<int:index>')
 def api_welcome_index(index):
     return welcome[index]
 ```
+La figure suivante montre la reponse du serveur quand nous avons ajouté un index à la fin de l'adresse.
+
 ![reponse_routage_1](/img/reponse_routage_1.png "routage_1")
-### Questions
+
+#### Questions
 1. Quel est le rôle du décorateur @app.route?
 Il ajoute une nouvelle branche au chemin initial.
 2. Quel est le rôle du fragment <int:index>?
 Il permet d’identifier le bit de la chaîne de caractère de la fonction welcome. Donc l’index 0 renvoie “W”. Si on met un index plus grand que la chaîne de caractère, le serveur renvoie une erreur 500 qui correspond à une erreur interne du serveur.
 
-### REMARQUE
+#### REMARQUE
 Nous avons pris des reponse de serveur en formar JSON car ils sont plus lisables 
 
-|   CRUB     |   Réponse du STM    | Commentaire ||
+#### Reponse JSON
+Nous avons ajoute une réponse JSON à partir de la bibliothèque «jsonify». Elle est accessible après ce ligne de code ```from flask import jsonify```. Cette fonction gère à la fois la conversion en json et l’ajout de l’entête.
+
+#### Erreur 404
+Nous avons ajouté un nouveau dossier (templates) dans le dossier de interface REST et à l'interiur on place le fichier «page_not_found.html». Les lignes de code suivantes sont été ajutés pour faire l'affichage de l'erreur.
+```
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('page_not_found.html'), 404
+```
+#### Méthodes POST, PUT, DELETE
+Dans cette partie, Nous avons élaboré les différentes méthodes pour es deux path. Le tabeau suivant montre cet information.
+
+|   CRUB     |   Réponse du STM    | Path |Commentaire|
 | :------------: | :---------------: |:-----:| :-----: |
 | Create   | POST  | welcome/  | Change sentence |
 | Retreive | GET   | welcome/  | Return sentence |
@@ -132,6 +150,8 @@ Nous avons pris des reponse de serveur en formar JSON car ils sont plus lisables
 | Update   | PATCH | welcome/x | Change letter at position x |
 | Delete   | DELETE| welcome/x | Delete letter at position x |
 | Delete   | DELETE| welcome/  | Delete sentece |
+
+L'implementation de ces fonctions se trouve à partir de la ligne [15](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L15) et [26](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L26) pour les path welcome/ et welcome/x, respectivement.
 
 ## TP4 Bus CAN
 Interface API Rest & pilotage d'actionneur par bus CAN
