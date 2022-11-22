@@ -87,6 +87,7 @@ pip3 install pyserial
 pip3 install flask
 ```
 La image suivante illustre le nouveau utilisateur sur la Raspberry Pi:
+
 ![user_ramos](/img/user_ramos.png "User Ramos")
 
 ### Premier fichier Web
@@ -104,6 +105,10 @@ Ensuite, à partir de la ligne de code suivante nous initialisons notre serveur.
 FLASK_APP=hello.py FLASK_ENV=development flask run --host 0.0.0.0
 ```
 La constante ``` FLASK_ENV=development ``` permet de lancer un mode debug.
+L'image suivante illustre les adresses pour se connecter au serveur web.
+
+![IP](/img/adresses.png "IP")
+
 Quand on ouvre un navigateur web et qu’on entre l’adresse publique, on obtient l’affichage suivant :
 
 ![serveur_web](/img/serveur_web.png "serveur web")
@@ -151,7 +156,9 @@ Dans cette partie, Nous avons élaboré les différentes méthodes pour es deux 
 | Delete   | DELETE| welcome/x | Delete letter at position x |
 | Delete   | DELETE| welcome/  | Delete sentece |
 
-L'implementation de ces fonctions se trouve à partir de la ligne [15](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L15) et [26](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L26) pour les path welcome/ et welcome/x, respectivement.
+L'implementation de ces fonctions se trouve dans le fichier «hello.py» à partir de les lignes [15](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L15) et [26](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L26) pour les path welcome/ et welcome/x, respectivement.
+
+Pour tester le fonctionnement de l'API Rest, nous avons utilisons l'extention de Mozilla «Open RESTED» pour tester chaque requete pour chaque différent Path.
 
 ## TP4 Bus CAN
 Interface API Rest & pilotage d'actionneur par bus CAN
