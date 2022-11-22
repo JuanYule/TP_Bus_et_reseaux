@@ -1,6 +1,6 @@
 # TP:  Bus et réseaux industriels
 ### Description
-Le but du tps est d'acquérir les données du capteur BMP280 par le STM32 et ensuite de contrôler ces données par une interface API.
+Le but du TP est d'acquérir les données du capteur BMP280 par le STM32 et ensuite de contrôler ces données par une interface API.
 La figure suivante illustre l'architecture générale du système :
 ![Structure du projet](/img/TP_complet.png "Structure du projet")
 
@@ -19,9 +19,9 @@ Interrogation des capteurs par le bus I²2C
 
 ![architecture_TP1](/img/architecture_TP1.png "Architecture TP1")
 
- Le BMP280 est un capteur de pression et température développé par Bosch (page produit).
+ Le BMP280 est un capteur de pression et de température développé par Bosch (page produit).
 
- A partir de la datasheet du BMP280, nous avons determiné les éléments suivantes:
+ A partir de la datasheet du BMP280, nous avons determiné les éléments suivants:
  1. Les adresses I²C possibles pour ce composant sont sur 7 bits. Si on connecte la broche SDO au GND, l’adresse du composant est 111 0110 (0x76). Si la broche est connectée à Vddio, c’est 111 0111 (0x77)
  2. Le registre permettant d’identifier ce composant est nommé « id » dont l’adresse est 0xD0. Sa valeur est 0x58 et peut être lue dès que le composant est sous tension 
  3. Le registre permettant de placer le composant en mode NORMAL est le « ctrl_meas» et son adresse est 0xF4. Il faut mettre les bits de valeur 11 dans mode [1 :0]
@@ -32,7 +32,7 @@ Interrogation des capteurs par le bus I²2C
 
  ### Setup du STM32
 
-Dans cette partie, nous avons configure les broches pour configurer le Bus CAN, l'USART2 et l'USART3 et la communication I2C :
+Dans cette partie, nous avons determiné les broches pour configurer le Bus CAN, l'USART2, l'USART3 et la communication I2C :
 
 |Pour la com bus CAN||
 | :------------: | :---------------:|
@@ -49,7 +49,7 @@ Dans cette partie, nous avons configure les broches pour configurer le Bus CAN, 
 | Rx | PC5 |
 | Tx | PB10 |
 
-Nous avons choisi pour la communciation I2C entre le capteur de temperature les pins suivantes:
+Nous avons choisi pour la communication I2C entre le capteur de température et la STM32 les broches suivantes:
 
 |Pour la cmmunication I2C||
 | :------------: |:---------------:|
@@ -81,12 +81,12 @@ sudo adduser ramos
 sudo usermod -aG sudo ramos
 sudo usermod -aG dialout ramos
 ```
-Pour se déloguer, il faut utiliser les commandes Ctrl + D et pour se déconnecter de la raspberry, il faut utiliser les commandes Ctrl + C. Il faut installer flask directement sur le serveur dans ramos et pas sur ese. Ensuite, nous avons créé un répertoire «interface REST» où tous les fichiers seront stockés. Les bibliothèques suivantes sont été installés à partir des commandes suivantes:
+Pour se déloguer, il faut utiliser les commandes Ctrl + D et pour se déconnecter de la raspberry, il faut utiliser les commandes Ctrl + C. Il faut installer flask directement sur le serveur dans ramos et pas sur ese. Ensuite, nous avons créé un répertoire «interface REST» où tous les fichiers seront stockés. Les bibliothèques suivantes sont été installées à partir des commandes suivantes:
 ```
 pip3 install pyserial
 pip3 install flask
 ```
-La image suivante illustre le nouveau utilisateur sur la Raspberry Pi:
+L'image suivante illustre le nouvel utilisateur sur la Raspberry Pi:
 
 ![user_ramos](/img/user_ramos.png "User Ramos")
 
@@ -100,7 +100,7 @@ app = Flask(__name__)
 def hello_world():
     return 'Hello, World!\n'
 ```
-Ensuite, à partir de la ligne de code suivante nous initialisons notre serveur. Cette ligne de code permet  d'eviter que notre serveur ne fonctionne qu'en loopback.
+Ensuite, à partir de la ligne de code suivante nous initialisons notre serveur. Cette ligne de code permet d'éviter que notre serveur ne fonctionne qu'en loopback.
 ```
 FLASK_APP=hello.py FLASK_ENV=development flask run --host 0.0.0.0
 ```
@@ -113,8 +113,8 @@ Quand on ouvre un navigateur web et qu’on entre l’adresse publique, on obtie
 
 ![serveur_web](/img/serveur_web.png "serveur web")
 
-### Première routage
-Pour faire le prèmiere routage nous avons ajouté les lignes suivantes au fichier hello.py:
+### Premier routage
+Pour faire le premier routage nous avons ajouté les lignes suivantes au fichier hello.py:
 ```
 @app.route('/api/welcome/<int:index>')
 def api_welcome_index(index):
@@ -131,20 +131,20 @@ Il ajoute une nouvelle branche au chemin initial.
 Il permet d’identifier le bit de la chaîne de caractère de la fonction welcome. Donc l’index 0 renvoie “W”. Si on met un index plus grand que la chaîne de caractère, le serveur renvoie une erreur 500 qui correspond à une erreur interne du serveur.
 
 #### REMARQUE
-Nous avons pris des reponse de serveur en formar JSON car ils sont plus lisables 
+Nous avons pris des réponses de serveur en format JSON car ils sont plus lisibles 
 
 #### Reponse JSON
-Nous avons ajoute une réponse JSON à partir de la bibliothèque «jsonify». Elle est accessible après ce ligne de code ```from flask import jsonify```. Cette fonction gère à la fois la conversion en json et l’ajout de l’entête.
+Nous avons ajouté une réponse JSON à partir de la bibliothèque «jsonify». Elle est accessible après cette ligne de code ```from flask import jsonify```. Cette fonction gère à la fois la conversion en json et l’ajout de l’entête.
 
 #### Erreur 404
-Nous avons ajouté un nouveau dossier (templates) dans le dossier de interface REST et à l'interiur on place le fichier «page_not_found.html». Les lignes de code suivantes sont été ajutés pour faire l'affichage de l'erreur.
+Nous avons ajouté un nouveau dossier (templates) dans le dossier de interface REST et à l'intérieur on place le fichier «page_not_found.html». Les lignes de code suivantes sont été ajoutés pour faire l'affichage de l'erreur.
 ```
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
 ```
 #### Méthodes POST, PUT, DELETE
-Dans cette partie, Nous avons élaboré les différentes méthodes pour es deux path. Le tabeau suivant montre cet information.
+Dans cette partie, Nous avons élaboré les différentes méthodes pour les deux path. Le tabmeau suivant montre ces informations.
 
 |   CRUB     |   Réponse du STM    | Path |Commentaire|
 | :------------: | :---------------: |:-----:| :-----: |
@@ -156,14 +156,14 @@ Dans cette partie, Nous avons élaboré les différentes méthodes pour es deux 
 | Delete   | DELETE| welcome/x | Delete letter at position x |
 | Delete   | DELETE| welcome/  | Delete sentece |
 
-L'implementation de ces fonctions se trouve dans le fichier «hello.py» à partir de les lignes [15](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L15) et [26](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L26) pour les path welcome/ et welcome/x, respectivement.
+L'implémentation de ces fonctions se trouve dans le fichier «hello.py» à partir des lignes [15](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L15) et [26](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L26) pour les path welcome/ et welcome/x, respectivement.
 
-Pour tester le fonctionnement de l'API Rest, nous avons utilisons l'extention de Mozilla «Open RESTED» pour verifier chaque requete pour chaque différent Path.
-La figure suivante illustre à titre d'example la reponse que nous avons obtenu au moment que nous faisons la requete 'GET'.
+Pour tester le fonctionnement de l'API Rest, nous utilisons l'extention de Mozilla «Open RESTED» pour vérifier chaque requête pour différent Path.
+La figure suivante illustre à titre d'exemple la réponse que nous avons obtenu au moment où nous avons fait la requete 'GET'.
 
 ![requete](/img/requete.png "Requete")
 
-Pour conclure ce TP3, nous avons pu verifier toutes les requetes pour chaque Path et nous avons validé ce fonctionnement sur la raspberry Pi.
+Pour conclure ce TP3, nous avons pu vérifier toutes les rêquetes pour chaque Path et nous avons validé ce fonctionnement sur la raspberry Pi.
 
 ## TP4 Bus CAN
 Interface API Rest & pilotage d'actionneur par bus CAN
