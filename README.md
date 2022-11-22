@@ -34,7 +34,7 @@ Interrogation des capteurs par le bus I²2C
 Dans cette partie, nous avons configure les broches pour configurer le Bus CAN, l'USART2 et l'USART3 et la communication I2C :
 
 |Pour la com bus CAN||
-| :------------: |:---------------:|
+| :------------: | :---------------:|
 | Rx | PB8 |
 | Tx | PB9 |
 
@@ -73,7 +73,7 @@ Interfaçage STM32 <-> Raspberry Pi
 Interface Web sur Raspberry Pi
 
 |   CRUB     |   Réponse du STM    | Commentaire ||
-| :------------: |:---------------:|:-----:||:-----:|
+| :------------: | :---------------: |:-----:| :-----: |
 | Create   | POST  | welcome/  | Change sentence |
 | Retreive | GET   | welcome/  | Return sentence |
 | Retreive | GET   | welcome/x | Return letter x |
