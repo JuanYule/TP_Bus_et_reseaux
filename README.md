@@ -158,11 +158,19 @@ Dans cette partie, Nous avons élaboré les différentes méthodes pour es deux 
 
 L'implementation de ces fonctions se trouve dans le fichier «hello.py» à partir de les lignes [15](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L15) et [26](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L26) pour les path welcome/ et welcome/x, respectivement.
 
-Pour tester le fonctionnement de l'API Rest, nous avons utilisons l'extention de Mozilla «Open RESTED» pour tester chaque requete pour chaque différent Path.
+Pour tester le fonctionnement de l'API Rest, nous avons utilisons l'extention de Mozilla «Open RESTED» pour verifier chaque requete pour chaque différent Path.
+La figure suivante illustre à titre d'example la reponse que nous avons obtenu au moment que nous faisons la requete 'GET'.
+
+![requete](/img/requete.png "Requete")
+
+Pour conclure ce TP3, nous avons pu verifier toutes les requetes pour chaque Path et nous avons validé ce fonctionnement sur la raspberry Pi.
 
 ## TP4 Bus CAN
 Interface API Rest & pilotage d'actionneur par bus CAN
 
 ![architecture_TP4](/img/architecture_TP4.png "Architecture TP4")
 
+Le moteur est piloté à partir de deux modes: automatique et manuel. La figure suivante montre le tableau de configuration.
+
+![stepper_motor](/img/stepper_motor.png "stepper_motor")
 ## Conclusion
