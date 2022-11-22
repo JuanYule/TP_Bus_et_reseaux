@@ -7,7 +7,7 @@ La figure suivante illustre l'architecture générale du système :
 
 
 **Table of Contents**
-1. [TP1-Bis I2C](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp1-bus-i2c)
+1. [TP1-Bus I2C](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp1-bus-i2c)
 2. [TP2-Interfaçage STM32 - Raspberry](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp2-interfaçage-stm32---raspberry)
 3. [TP3-Interface REST](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp3-interface-rest)
 4. [TP4-Bus CAN](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/README.md#tp4-bus-can)
@@ -80,8 +80,30 @@ sudo adduser ramos
 sudo usermod -aG sudo ramos
 sudo usermod -aG dialout ramos
 ```
-
+Pour se déloguer, il faut utiliser les commandes Ctrl + D et pour se déconnecter de la raspberry, il faut utiliser les commandes Ctrl + C. Il faut installer flask directement sur le serveur dans ramos et pas sur ese. Ensuite, nous avons créé un répertoire «interface REST» où tous les fichiers seront stockés. Les bibliothèques suivantes sont été installés à partir des commandes suivantes:
+```
+pip3 install pyserial
+pip3 install flask
+```
+La image suivante illustre le nouveau utilisateur sur la Raspberry Pi:
 ![user_ramos](/img/user_ramos.png "User Ramos")
+
+### Premier fichier Web
+Nous avons d'abord créé un fichier pour notre premier serveur web de la manière suivante
+```
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!\n'
+```
+Ensuite, à partir de la ligne de code suivante nous initialisons notre serveur. Cette ligne de code permet  d'eviter que notre serveur ne fonctionne qu'en loopback.
+```
+FLASK_APP=hello.py FLASK_ENV=development flask run --host 0.0.0.0
+```
+La constante ``` FLASK_ENV=development ``` permet de lancer un mode debug
+
 
 |   CRUB     |   Réponse du STM    | Commentaire ||
 | :------------: | :---------------: |:-----:| :-----: |
