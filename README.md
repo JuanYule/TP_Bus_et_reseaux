@@ -89,7 +89,7 @@ La image suivante illustre le nouveau utilisateur sur la Raspberry Pi:
 ![user_ramos](/img/user_ramos.png "User Ramos")
 
 ### Premier fichier Web
-Nous avons d'abord créé un fichier pour notre premier serveur web de la manière suivante
+Nous avons d'abord créé un fichier (hello.py) pour notre premier serveur web de la manière suivante
 ```
 from flask import Flask
 app = Flask(__name__)
@@ -102,8 +102,26 @@ Ensuite, à partir de la ligne de code suivante nous initialisons notre serveur.
 ```
 FLASK_APP=hello.py FLASK_ENV=development flask run --host 0.0.0.0
 ```
-La constante ``` FLASK_ENV=development ``` permet de lancer un mode debug
+La constante ``` FLASK_ENV=development ``` permet de lancer un mode debug.
+Quand on ouvre un navigateur web et qu’on entre l’adresse publique, on obtient l’affichage suivant :
 
+![serveur_web](/img/serveur_web.png "serveur web")
+## Première routage
+Pour faire le prèmiere routage nous avons ajouté les lignes suivantes au fichier hello.py:
+```
+@app.route('/api/welcome/<int:index>')
+def api_welcome_index(index):
+    return welcome[index]
+```
+![reponse_routage_1](/img/reponse_routage_1.png "routage_1")
+### Questions
+1. Quel est le rôle du décorateur @app.route?
+Il ajoute une nouvelle branche au chemin initial.
+2. Quel est le rôle du fragment <int:index>?
+Il permet d’identifier le bit de la chaîne de caractère de la fonction welcome. Donc l’index 0 renvoie “W”. Si on met un index plus grand que la chaîne de caractère, le serveur renvoie une erreur 500 qui correspond à une erreur interne du serveur.
+
+### REMARQUE
+Nous avons pris des reponse de serveur en formar JSON car ils sont plus lisables 
 
 |   CRUB     |   Réponse du STM    | Commentaire ||
 | :------------: | :---------------: |:-----:| :-----: |
