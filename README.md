@@ -15,34 +15,37 @@ La figure suivante illustre l'architecture générale du système :
 
 
 ## TP1 Bus I2C
-Interrogation des capteurs par le bus I²2C
+Pour cette première partie, nous avons réalisé l'interrogation des capteurs par le bus I²C du microcontrôleur. L'objectif de cette partie est d'interfacer un STM32 avec des capteurs I²C. Ici, nous avons utilisé le BMP280 qui est un capteur de pression et de température développé par Bosch.
 
 ![architecture_TP1](/img/architecture_TP1.png "Architecture TP1")
 
- Le BMP280 est un capteur de pression et de température développé par Bosch (page produit).
-
- A partir de la datasheet du BMP280, nous avons determiné les éléments suivants:
- 1. Les adresses I²C possibles pour ce composant sont sur 7 bits. Si on connecte la broche SDO au GND, l’adresse du composant est 111 0110 (0x76). Si la broche est connectée à Vddio, c’est 111 0111 (0x77)
- 2. Le registre permettant d’identifier ce composant est nommé « id » dont l’adresse est 0xD0. Sa valeur est 0x58 et peut être lue dès que le composant est sous tension 
- 3. Le registre permettant de placer le composant en mode NORMAL est le « ctrl_meas» et son adresse est 0xF4. Il faut mettre les bits de valeur 11 dans mode [1 :0]
- 4. Les registres contenant l’étalonnage du composant sont à l’adresse 0x88 à l’adresse 0xA1
+ A partir de la datasheet du capteur BMP280, nous avons determiné les éléments suivants:
+ 1. Les adresses I²C possibles pour ce composant sont sur 7 bits. Si on connecte la broche SDO au GND, l’adresse du composant est 111 0110 (0x76). Si la broche est connectée à Vddio, c’est 111 0111 (0x77).
+ 2. Le registre permettant d’identifier ce composant est nommé « id » dont l’adresse est 0xD0. Sa valeur est 0x58 et peut être lue dès que le composant est sous tension.
+ 3. Le registre permettant de placer le composant en mode NORMAL est le « ctrl_meas» et son adresse est 0xF4. Il faut mettre les bits de valeur 11 dans mode [1 :0].
+ 4. Les registres contenant l’étalonnage du composant sont à l’adresse 0x88 jusqu'à l’adresse 0xA1.
  5. Les registres contenant la température du composant sont nommés « temp » et sont aux adresses allant de 0xFA à 0xFC. Le format de la donnée est unsigned sur 20 bits, ut[19 :0].
  6. Les registres contenant la pression du composant sont nommés « press » et sont aux adresses allant de 0xF7 à 0xF9. Le format de la donnée est unsigned sur 20 bits, up[19 :0].
  7. Les fonctions permettant le calcul de la température et de la pression compensées en format entier 32 bits sont à la page 45 et 46 de la datasheet.
 
+
  ### Setup du STM32
 
-Dans cette partie, nous avons determiné les broches pour configurer le Bus CAN, l'USART2, l'USART3 et la communication I2C :
+Dans cette sous-partie, nous avons determiné les broches pour configurer le Bus CAN, l'USART2, l'USART3 et la communication I2C. Le bus CAN sert à faire la connexion entre le moteur pas à pas et la carte STM32 :
 
 |Pour la com bus CAN||
 | :------------: | :---------------:|
 | Rx | PB8 |
 | Tx | PB9 |
 
+La communication UART2 sert à faire la connexion entre le port USB de notre ordinateur et la carte STM32 :
+
 |Pour l'USART 2||
 | :------------: |:---------------:|
 | Rx | PA3 |
 | Tx | PA2 |
+
+La communication UART3 sert à faire la connexion entre la raspberry Pi et la carte STM32 :
 
 |Pour l'USART 3||
 | :------------: |:---------------:|
@@ -56,6 +59,40 @@ Nous avons choisi pour la communication I2C entre le capteur de température et 
 | SDA | PB7 |
 | SCL | PB6 |
 
+Ensuite, nous avons effectué la redirection du printf afin de pouvoir facilement déboguer notre programme sur la STM32. Ainsi, la fonction printf renvoie ses chaînes de caractères sur la liaison UART en USB. Il faut ajouter le code suivant au fichier stm32f4xx_hal_msp.c :
+
+/* USER CODE BEGIN PV */  
+extern UART_HandleTypeDef huart2;  
+/* USER CODE END PV */  
+
+
+/* USER CODE BEGIN Macro */
+#ifdef __GNUC__ /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf    set to 'Yes') calls __io_putchar() */
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+/* USER CODE END Macro */
+
+
+/* USER CODE BEGIN 1 */
+/**
+  * @brief  Retargets the C library printf function to the USART.
+  * @param  None
+  * @retval None
+  */
+PUTCHAR_PROTOTYPE
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the USART2 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
+
+  return ch;
+}
+/* USER CODE END 1 */
+
+Après avoir ajouté ces lignes dans le code, nous avons ouvert un terminal et testé le code. Nous avons obtenu le résultat suivant :
+METTRE IMAGE
 
 ## TP2 Interfaçage STM32 - Raspberry
 Interfaçage STM32 <-> Raspberry Pi
