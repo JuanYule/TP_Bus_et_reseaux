@@ -93,7 +93,9 @@ PUTCHAR_PROTOTYPE
 
 Après avoir ajouté ces lignes dans le code, nous avons ouvert un terminal et testé le code. Nous avons obtenu le résultat suivant :
 
-![resultatTestUart_TP1](/img/resultatTP1Setup.png "resultat test UART TP1")
+![resultatTestUart_TP1](img/resutatTP1Setup.png "resultat test UART TP1")
+
+On affiche la valeur de l'ID :
 
 ![valeurID_TP1](/img/valeurIdTP1Setup.png "valeur ID TP1")
 
