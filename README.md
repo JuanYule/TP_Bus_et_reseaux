@@ -66,33 +66,36 @@ extern UART_HandleTypeDef huart2;
 /* USER CODE END PV */  
 
 
-/* USER CODE BEGIN Macro */
-#ifdef __GNUC__ /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf    set to 'Yes') calls __io_putchar() */
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif /* __GNUC__ */
-/* USER CODE END Macro */
+/* USER CODE BEGIN Macro */  
+#ifdef __GNUC__ /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf    set to 'Yes') calls __io_putchar() */  
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)  
+#else  
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)  
+#endif /* __GNUC__ */  
+/* USER CODE END Macro */  
 
 
-/* USER CODE BEGIN 1 */
-/**
-  * @brief  Retargets the C library printf function to the USART.
-  * @param  None
-  * @retval None
-  */
-PUTCHAR_PROTOTYPE
-{
-  /* Place your implementation of fputc here */
-  /* e.g. write a character to the USART2 and Loop until the end of transmission */
-  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
+/* USER CODE BEGIN 1 */  
+/**  
+  * @brief  Retargets the C library printf function to the USART.  
+  * @param  None  
+  * @retval None  
+  */  
+PUTCHAR_PROTOTYPE  
+{  
+  /* Place your implementation of fputc here */  
+  /* e.g. write a character to the USART2 and Loop until the end of transmission */  
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);  
 
-  return ch;
+  return ch;  
 }
-/* USER CODE END 1 */
+/* USER CODE END 1 */  
 
 Après avoir ajouté ces lignes dans le code, nous avons ouvert un terminal et testé le code. Nous avons obtenu le résultat suivant :
-METTRE IMAGE
+
+![resultatTestUart_TP1](/img/resultatTP1Setup.png "resultat test UART TP1")
+
+![valeurID_TP1](/img/valeurIdTP1Setup.png "valeur ID TP1")
 
 ## TP2 Interfaçage STM32 - Raspberry
 Interfaçage STM32 <-> Raspberry Pi
@@ -210,4 +213,7 @@ Interface API Rest & pilotage d'actionneur par bus CAN
 Le moteur est piloté à partir de deux modes: automatique et manuel. La figure suivante montre le tableau de configuration.
 
 ![stepper_motor](/img/stepper_motor.png "stepper_motor")
+
+![config_TP4](/img/configTP4.png "configuration TP4")
+
 ## Conclusion
