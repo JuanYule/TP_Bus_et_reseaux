@@ -61,10 +61,10 @@ Nous avons choisi pour la communication I2C entre le capteur de température et 
 
 Ensuite, nous avons effectué la redirection du printf afin de pouvoir facilement déboguer notre programme sur la STM32. Ainsi, la fonction printf renvoie ses chaînes de caractères sur la liaison UART en USB. Il faut ajouter le code suivant au fichier stm32f4xx_hal_msp.c :
 
+
 /* USER CODE BEGIN PV */  
 extern UART_HandleTypeDef huart2;  
 /* USER CODE END PV */  
-
 
 /* USER CODE BEGIN Macro */  
 #ifdef __GNUC__ /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf    set to 'Yes') calls __io_putchar() */  
@@ -91,13 +91,35 @@ PUTCHAR_PROTOTYPE
 }
 /* USER CODE END 1 */  
 
-Après avoir ajouté ces lignes dans le code, nous avons ouvert un terminal et testé le code. Nous avons obtenu le résultat suivant :
+
+Après avoir ajouté ces lignes dans le code du fichier stm32f4xx_hal_msp.c, nous avons réalisé un printf suivi d'un délai dans la boucle while :
+
+![codeTestUart_TP1](img/helloTP1.png "code test UART TP1")
+
+Puis, nous avons ouvert un terminal, lancé et testé le code. Nous avons obtenu le résultat suivant :
 
 ![resultatTestUart_TP1](img/resutatTP1Setup.png "resultat test UART TP1")
 
+Ainsi, la chaine de caractère "hello" s'affichait toutes les secondes dans le terminal.
+
+### Communication I²C avec le BMP280
+
+On utilise les fonctions Transmit et Receive de la bibliothèque HAL pour réaliser la communication I²C. Il faut tout de même faire attention à l'adresse demandée de 8 bits alors que l'adresse I²C est sur 7 bits. Donc il faut décaler l'adresse I²C de 1 vers la gauche lorsqu'on utilise les fonctions HAL.
+
+#### Identification du BMP280
+Dans un premier temps, il faut identifier notre capteur en lisant la valeur du registre ID. Pour cela, il faut envoyer l'adresse du registre ID, 0xD0, et recevoir 1 octet correspondant au contenu du registre, 0x58. Nous avons écrit la fonction *id_BMP280()* qui réalise ces instructions.
 On affiche la valeur de l'ID :
 
 ![valeurID_TP1](/img/valeurIdTP1Setup.png "valeur ID TP1")
+
+Le numéro d'identification du capteur BMP280 est bien 0x58, comme la documentation l'indique. Nous avons par la suite observé la forme des trames I²C à l'oscilloscope. Les sorties sont en collecteur ouvert, on peut donc voir sur l'oscilloscope que les signaux ne sont pas carrés mais de type RC. Pour changer et avoir des beaux signaux carrés, il faut ajouter une capacité et une résistance.
+
+#### Configuration du BMP280
+
+#### Récupération de l'étalonnage, de la température et de la pression
+
+#### Calcul des températures et des pression compensées
+
 
 ## TP2 Interfaçage STM32 - Raspberry
 Interfaçage STM32 <-> Raspberry Pi
