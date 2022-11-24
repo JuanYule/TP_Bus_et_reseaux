@@ -107,8 +107,7 @@ Ainsi, la chaine de caractère "hello" s'affichait toutes les secondes dans le t
 On utilise les fonctions Transmit et Receive de la bibliothèque HAL pour réaliser la communication I²C. Il faut tout de même faire attention à l'adresse demandée de 8 bits alors que l'adresse I²C est sur 7 bits. Donc il faut décaler l'adresse I²C de 1 vers la gauche lorsqu'on utilise les fonctions HAL.
 
 #### Identification du BMP280
-Dans un premier temps, il faut identifier notre capteur en lisant la valeur du registre ID. Pour cela, il faut envoyer l'adresse du registre ID, 0xD0, et recevoir 1 octet correspondant au contenu du registre, 0x58. Nous avons écrit la fonction *id_BMP280()* qui réalise ces instructions.
-On affiche la valeur de l'ID :
+Dans un premier temps, il faut identifier notre capteur en lisant la valeur du registre ID. Pour cela, il faut envoyer l'adresse du registre ID, 0xD0, et recevoir 1 octet correspondant au contenu du registre, 0x58. Nous avons écrit la fonction *id_BMP280()* qui réalise ces instructions. Ainsi, on transmet la valeur du registre ID avec la fonction *HAL_I2C_Master_Transmit* et on reçoit son contenu avec la fonction *HAL_I2C_Master_Receive* contenant un tableau d'au moins 1 octet. Si la valeur reçue correspond bien à 0x58, c'est qu'on communique bien avec le capteur. Après avoir lancé le programme, on observe la valeur de l'ID :
 
 ![valeurID_TP1](/img/valeurIdTP1Setup.png "valeur ID TP1")
 
@@ -128,16 +127,31 @@ Afin d'avoir la température en oversampling x2, il faut modifier les bits 7, 6 
 
 ![registreF4Temp_TP1](/img/registreF4_temp.png "registre 0xF4 temp TP1")
 
+Ainsi, il faut mettre les trois bits à 010. Pour avoir la pression en oversampling x16, il faut modifier les bits 4, 3 et 2 en fonction du tableau suivant :
+
 ![registreF4Pres_TP1](/img/registreF4_pres.png "registre 0xF4 pres TP1")
+
+Ces bits valent alors 101. Pour configurer le capteur en mode normal, il faut mettre les bits 1 et 0 à la valeur 11 :
 
 ![registreF4Mode_TP1](/img/registreF4_mode.png "registre 0xF4 mode TP1")
 
-Nous avons donc écrit la valeur ... dans le registre 0xF4 avec la fonction ...
-
+Nous avons donc écrit la valeur 0b01010111 qui vaut 0x57 en hexadécimal dans le registre 0xF4. C'est avec la fonction *configBMP280()* que nous avons implémenter l'envoie de l'adresse du registre et sa valeur que nous avons trouvé. Nous avons donc placé ces deux données dans un tableau de 2 valeurs. Puis, nous avons envoyé ce tableau au capteur avec la fonction *HAL_I2C_Master_Transmit*. Enfin, nous avons reçu la nouvelle valeur du registre, 0x57, avec la fonction *HAL_I2C_Master_Receive*.
 
 #### Récupération de l'étalonnage, de la température et de la pression
 
+Après avoir configuré le capteur BMP280, il faut récupérer les données de l'étalonnage et les valeurs de température et de pression. Pour récupérer les données de l'étalonnage, le principe est le même que précédemment. Il faut envoyer l'adresse du registre et ensuite on reçoit l'étalonnage dans un tableau adapté. L'adresse du registre est donnée par la carte mémoire de la documentation du capteur :
+
+![tableauMemoire_TP1](/img/calibrationTP1.png "tableau mémoire TP1")
+ 
+C'est le registre *calibration* qui nous intéresse ici et son adresse correspond à l'adresse du premier élément du tableau, 0x88. Dans la fonction *etalonnageBMP280()*, on transmet donc cette adresse et on reçoit dans un tableau de 26 éléments, les données de l'étalonnage. Enfin, nous avons mis en forme les données d'étalonnage sous la forme suivante pour le calcul de la compensation :
+
+![formatCompensation_TP1](/img/compensation.png "format compensation TP1")
+
+Nous avons effectué des décalages et des casts en mot de 16 bits pour les MSB. Nous avons ensuite effectué une opération bit à bit OU avec les LSB.
+
 #### Calcul des températures et des pressions compensées
+
+Comment on a fait ça ??
 
 
 ## TP2 Interfaçage STM32 - Raspberry
@@ -269,14 +283,26 @@ La figure suivante illustre à titre d'exemple la réponse que nous avons obtenu
 Pour conclure ce TP3, nous avons pu vérifier toutes les rêquetes pour chaque Path et nous avons validé ce fonctionnement sur la raspberry Pi.
 
 ## TP4 Bus CAN
-Interface API Rest & pilotage d'actionneur par bus CAN
+
+L'objectif de cette partie est de piloter un actionneur, ici un moteur pas à pas, via un bus CAN. La carte Nucleo STM32L476 est équipé d'un contrôleur CAN intégré mais nous avons besoin d'un Transceiver CAN, ici le TJA1050. Celui-ci permet de faire le lien entre la tension 3,3 V du contrôleur CAN et celle de 12 V de l'actionneur.
 
 ![architecture_TP4](/img/architecture_TP4.png "Architecture TP4")
 
-Le moteur est piloté à partir de deux modes: automatique et manuel. La figure suivante montre le tableau de configuration.
+### Pilotage du moteur
+La carte moteur est un peu capricieuse et ne semble tolérer qu'une vitesse CAN de 500kbit/s. Ainsi, nous avons configuré la communication CAN avec un prescaler de 16 et les segments 1 et 2 à la valeur 2 :
+
+![config_TP4](/img/configTP4.png "configuration TP4")
+
+Ce qui nous donne un baudrate donc une vitesse de 500kbit/s. Après avoir fait cette configuration, nous avons effectué un code qui fait bouger le moteur de 90° dans un sens, puis de 90° dans l'autre, avec une période de 1 seconde. Avant tout, le moteur est piloté à partir de deux modes : manuel et par angle. La figure suivante montre le tableau de configuration :
 
 ![stepper_motor](/img/stepper_motor.png "stepper_motor")
 
-![config_TP4](/img/configTP4.png "configuration TP4")
+Ainsi, dans un premier temps nous avons fixé la position interne à 0 avec la fonction *config_CAN_set0()*. Pour cela, on place le moteur pas à pas comme on le souhaite et on met l'identifiant standard, *StdId*, à la valeur 0x62. Nous avons appelé cette fonction une seule fois puis nous l'avons mise en commentaire. La configuration est envoyé au moteur pas à pas via la fonction *HAL_CAN_AddTxMessage*.
+
+Ensuite, nous avons configuré la commande par angle avec la fonction *config_CAN()*. Dans celle-ci, nous avons donc mis l'identifiant standard, *StdId*, à la valeur 0x61. En plus de tous les autres paramètres, nous avons créé un tableau *aData* de 2 cases avec les valeurs D0 et D1 du tableau précédent. Ces valeurs permettent de commander la valeur et le signe de l'angle souhaité. Comme on veut faire bouger le moteur toutes les secondes, on utilise un timer, ici TIM13, avec une interruption. Dans sa fonction de callback *HAL_TIM_PeriodElapsedCallback()*, nous avons modifié les valeurs du tableau *aData* pour avoir un angle de 90° donc la valeur 0x5A. A l'aide de la boucle if en commentaire, la première fois qu'on entre dans la boucle, le moteur bouge jusqu'à 90°. La deuxième fois, on écrit la valeur 0 dans le tableau donc le moteur bouge jusqu'à la position 0. Le fonctionnement se répète grâce à la variable *incr* qui vaut 1 pour aller dans le *if* et 0 pour aller dans le *else*.
+
+### Interfaçage avec le capteur
+
+Dans cette sous-partie, il faut faire en sorte que le mouvement du moteur soit proportionnel à la valeur du capteur. Pour cela, nous avons modifié la fonction *HAL_TIM_PeriodElapsedCallback()*. En effet,on va lire la valeur de la température, la transformer en entier et la mettre dans la case 2 du tableau *aData* pour commander l'angle. Enfin, on envoie le tableau via la fonction *HAL_CAN_AddTxMessage*.
 
 ## Conclusion
