@@ -122,10 +122,30 @@ Le numéro d'identification du capteur BMP280 est bien 0x58, comme la documentat
 
 
 ## TP2 Interfaçage STM32 - Raspberry
-Interfaçage STM32 <-> Raspberry Pi
+L'objetif principal de ce TP est de configurer les interfaces entre le STM32 et le RaspberyPi 0. La image suivante illustre l'architecture du système.
 
 ![architecture_TP2](/img/architecture_TP2.png "Architecture TP2")
 
+### Mise en routage du Raspberry PI Zero
+En premier temps, nous avons télécharger l'image "Raspberry Pi os" et on l'installé sur la carte SD grace à l'outil BalenaEtcher.
+
+Nous avons changé le nom de notre raspberry pour «raspberrypi6».
+
+### Configuration de l'image
+Apres de la installation nous avons crée deux fichier: ssh (fichier vide) et wpa_supplicant.conf nous avons le rempli avec le code suivante.
+
+```
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=FR
+
+network={
+ ssid="ese"
+ psk="bus_ese"
+}
+```
+Notre adresse IP est 192.168.88.247 et à partir d'elle nous pouvons se connecter avec des protocols SSH. La commande suivante montre la manière avec laquelle on se connecte à la raspberry.
+``` ramos@192.168.88.247 ```
 |   Requête du RPi     |   Réponse du STM    | Commentaire |
 | :------------: |:---------------:| :-----:|
 | GET_T      | T=+12.50_C | Température compensée sur 10 caractères    |
