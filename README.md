@@ -61,7 +61,7 @@ Nous avons choisi pour la communication I2C entre le capteur de température et 
 
 Ensuite, nous avons effectué la redirection du printf afin de pouvoir facilement déboguer notre programme sur la STM32. Ainsi, la fonction printf renvoie ses chaînes de caractères sur la liaison UART en USB. Il faut ajouter le code suivant au fichier stm32f4xx_hal_msp.c :
 
-
+```
 /* USER CODE BEGIN PV */  
 extern UART_HandleTypeDef huart2;  
 /* USER CODE END PV */  
@@ -90,7 +90,7 @@ PUTCHAR_PROTOTYPE
   return ch;  
 }
 /* USER CODE END 1 */  
-
+```
 
 Après avoir ajouté ces lignes dans le code du fichier stm32f4xx_hal_msp.c, nous avons réalisé un printf suivi d'un délai dans la boucle while :
 
