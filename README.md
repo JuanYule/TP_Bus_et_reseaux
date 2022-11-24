@@ -112,13 +112,32 @@ On affiche la valeur de l'ID :
 
 ![valeurID_TP1](/img/valeurIdTP1Setup.png "valeur ID TP1")
 
-Le numéro d'identification du capteur BMP280 est bien 0x58, comme la documentation l'indique. Nous avons par la suite observé la forme des trames I²C à l'oscilloscope. Les sorties sont en collecteur ouvert, on peut donc voir sur l'oscilloscope que les signaux ne sont pas carrés mais de type RC. Pour changer et avoir des beaux signaux carrés, il faut ajouter une capacité et une résistance.
+Le numéro d'identification du capteur BMP280 est bien 0x58, comme la documentation l'indique. Nous avons par la suite observé la forme des trames I²C à l'oscilloscope. Les sorties sont en collecteur ouvert, on peut donc voir sur l'oscilloscope que les signaux ne sont pas carrés mais de type RC. C'est-à-dire qu'il y a un temps de montée pour atteindre la valeur à l'état haut. Pour éviter ce comportement et avoir des beaux signaux carrés, il faut ajouter une capacité et une résistance.
 
 #### Configuration du BMP280
 
+Avant de pouvoir effectuer une mesure, il faut configurer le BMP280. Pour cela, nous avons mis en place un mode normal, la pression en oversampling x16 et la température en oversampling x2. Pour écrire dans un registre, il faut envoyer :
+* L'adresse du registre où on souhaite écrire
+* La valeur à donner au registre
+
+Pour configurer le BMP280, il faut modifier le registre "ctrl_meas" situé à l'adresse 0xF4.
+
+![registreF4_TP1](/img/registreF4.png "registre 0xF4 TP1")
+
+Afin d'avoir la température en oversampling x2, il faut modifier les bits 7, 6 et 5 en fonction du tableau suivant :
+
+![registreF4Temp_TP1](/img/registreF4_temp.png "registre 0xF4 temp TP1")
+
+![registreF4Pres_TP1](/img/registreF4_pres.png "registre 0xF4 pres TP1")
+
+![registreF4Mode_TP1](/img/registreF4_mode.png "registre 0xF4 mode TP1")
+
+Nous avons donc écrit la valeur ... dans le registre 0xF4 avec la fonction ...
+
+
 #### Récupération de l'étalonnage, de la température et de la pression
 
-#### Calcul des températures et des pression compensées
+#### Calcul des températures et des pressions compensées
 
 
 ## TP2 Interfaçage STM32 - Raspberry
