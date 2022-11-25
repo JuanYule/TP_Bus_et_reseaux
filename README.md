@@ -195,8 +195,7 @@ sudo apt install minicom
 ```
 ### Script en Python pour se communiquer avec le STM32
 
-Nous avons realiser deux fichiers qui permettent de se communiquer avec la STM32 [TP_reseaux.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/TP_reseaux.py) et [foncions.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py). Le premier fichier est une shell qui envoi les caracteres lorsque on tape le clavier. Le fichier «fonctions.py» est le plus important car il contient les fonctions pour les protocoles que s'illuetrent dans le tableau suivante.
-
+Nous avons realiser deux fichiers qui permettent de se communiquer avec la STM32 [TP_reseaux.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/TP_reseaux.py) et [foncions.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py). Le premier fichier est un shell qui envoi les caractères lorsqu'on tape le clavier. Le fichier «fonctions.py» est le plus important, car il contient les fonctions pour les protocoles que s'illustrent dans le tableau suivant.
 
 |   Requête du RPi     |   Réponse du STM    | Commentaire |
 | :------------: |:---------------:| :-----:|
@@ -205,6 +204,9 @@ Nous avons realiser deux fichiers qui permettent de se communiquer avec la STM32
 | SET_K=1234 | SET_K=OK   |    Fixe le coefficient K (en 1/100e)       |
 | GET_K      | K=12.34000 |   Coefficient K sur 10 caractères          |
 | GET_A      | A=125.7000 |    Angle sur 10 caractères                 |
+
+Les request sont definis entre la ligne [67](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L67) jusqu'à la ligne [97](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L67). Di'ailleurs, la fonction pour la transmition des données a été defini entre les lignes [58](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L58)-[65](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L65). Cette fonction permet d'envoyer un seul caractère à la fois à travers de l'UART. 
+
 
 ## TP3 Interface REST
 Dans cette partie, nous avons implémenté une interface Web sur Raspberry Pi. Tout d'abord, nous procédons à l'intallation et la vérification du serveur Python.
