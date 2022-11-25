@@ -212,17 +212,17 @@ Pour la reception des données nous avons créé la fonction [receptionRx](https
 
 
 ## TP3 Interface REST
-Dans cette partie, nous avons implémenté une interface Web sur Raspberry Pi. Tout d'abord, nous procédons à l'intallation et la vérification du serveur Python.
-Nous avons vérifié le hostname de la raspberry dans le fichier /etc hostname et c’est : raspberry6
-Puis, nous avons modifié le hostname du fichier /etc/hosts raspberry6 pour avoir le même nom, car nous avions un problème de sudo.
+Dans cette partie, nous avons implémenté une interface Web sur Raspberry Pi. Tout d'abord, nous procédons à l'intallation et à la vérification du serveur Python.
+Nous avons vérifié le hostname de la raspberry dans le fichier /etc hostname et c’est bien : raspberry6
+Puis, nous avons modifié le hostname du fichier /etc/hosts par raspberry6 pour avoir le même nom, car nous avions un problème de sudo.
 
-Nous avons créé un profil nommé ramos à partir des commandes ci-dessous et nous nous sommes connectés à celui-ci :
+Nous avons ensuite créé un profil nommé ramos à partir des commandes ci-dessous et nous nous sommes connectés à celui-ci :
 ```
 sudo adduser ramos
 sudo usermod -aG sudo ramos
 sudo usermod -aG dialout ramos
 ```
-Pour se déloguer, il faut utiliser les commandes Ctrl + D et pour se déconnecter de la raspberry, il faut utiliser les commandes Ctrl + C. Il faut installer flask directement sur le serveur dans ramos et pas sur ese. Ensuite, nous avons créé un répertoire «interface REST» où tous les fichiers seront stockés. Les bibliothèques suivantes sont été installées à partir des commandes suivantes:
+Pour se déloguer, il faut utiliser les commandes Ctrl + D et pour se déconnecter de la raspberry, on utilise les commandes Ctrl + C. Il faut installer flask directement sur le serveur ramos et pas sur l'utilisateur ese. Ensuite, nous avons créé un répertoire «interface REST» où tous les fichiers seront stockés. Les bibliothèques suivantes sont été installées à partir des commandes suivantes:
 ```
 pip3 install pyserial
 pip3 install flask
@@ -232,7 +232,7 @@ L'image suivante illustre le nouvel utilisateur sur la Raspberry Pi:
 ![user_ramos](/img/user_ramos.png "User Ramos")
 
 ### Premier fichier Web
-Nous avons d'abord créé un fichier (hello.py) pour notre premier serveur web de la manière suivante
+Nous avons d'abord créé un fichier nommé hello.py pour notre premier serveur web de la manière suivante :
 ```
 from flask import Flask
 app = Flask(__name__)
@@ -261,7 +261,7 @@ Pour faire le premier routage nous avons ajouté les lignes suivantes au fichier
 def api_welcome_index(index):
     return welcome[index]
 ```
-La figure suivante montre la reponse du serveur quand nous avons ajouté un index à la fin de l'adresse.
+La figure suivante montre la réponse du serveur quand nous avons ajouté un index à la fin de l'adresse.
 
 ![reponse_routage_1](/img/reponse_routage_1.png "routage_1")
 
@@ -269,7 +269,7 @@ La figure suivante montre la reponse du serveur quand nous avons ajouté un inde
 1. Quel est le rôle du décorateur @app.route?
 Il ajoute une nouvelle branche au chemin initial.
 2. Quel est le rôle du fragment <int:index>?
-Il permet d’identifier le bit de la chaîne de caractère de la fonction welcome. Donc l’index 0 renvoie “W”. Si on met un index plus grand que la chaîne de caractère, le serveur renvoie une erreur 500 qui correspond à une erreur interne du serveur.
+Il permet d’identifier le bit de la chaîne de caractère de la fonction welcome. Donc l’index 0 renvoie “W”. Cependant, si on met un index plus grand que la chaîne de caractère, le serveur renvoie une erreur 500 qui correspond à une erreur interne du serveur.
 
 #### REMARQUE
 Nous avons pris des réponses de serveur en format JSON car ils sont plus lisibles 
@@ -278,14 +278,14 @@ Nous avons pris des réponses de serveur en format JSON car ils sont plus lisibl
 Nous avons ajouté une réponse JSON à partir de la bibliothèque «jsonify». Elle est accessible après cette ligne de code ```from flask import jsonify```. Cette fonction gère à la fois la conversion en json et l’ajout de l’entête.
 
 #### Erreur 404
-Nous avons ajouté un nouveau dossier (templates) dans le dossier de interface REST et à l'intérieur on place le fichier «page_not_found.html». Les lignes de code suivantes sont été ajoutés pour faire l'affichage de l'erreur.
+Nous avons ajouté un nouveau dossier (templates) dans le dossier de interface REST et à l'intérieur on place le fichier «page_not_found.html». Les lignes de code suivantes ont été ajoutés pour faire l'affichage de l'erreur.
 ```
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
 ```
 #### Méthodes POST, PUT, DELETE
-Dans cette partie, Nous avons élaboré les différentes méthodes pour les deux path. Le tabmeau suivant montre ces informations.
+Dans cette partie, Nous avons élaboré les différentes méthodes pour les deux path. Le tableau suivant montre ces informations.
 
 |   CRUB     |   Réponse du STM    | Path |Commentaire|
 | :------------: | :---------------: |:-----:| :-----: |
@@ -299,8 +299,8 @@ Dans cette partie, Nous avons élaboré les différentes méthodes pour les deux
 
 L'implémentation de ces fonctions se trouve dans le fichier «hello.py» à partir des lignes [15](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L15) et [26](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/hello.py#L26) pour les path welcome/ et welcome/x, respectivement.
 
-Pour tester le fonctionnement de l'API Rest, nous utilisons l'extention de Mozilla «Open RESTED» pour vérifier chaque requête pour différent Path.
-La figure suivante illustre à titre d'exemple la réponse que nous avons obtenu au moment où nous avons fait la requete 'GET'.
+Pour tester le fonctionnement de l'API Rest, nous utilisons l'extention de Mozilla «Open RESTED» pour vérifier chaque requête de différents path.
+La figure suivante illustre à titre d'exemple la réponse que nous avons obtenu au moment où nous avons fait la requête 'GET'.
 
 ![requete](/img/requete.png "Requete")
 
