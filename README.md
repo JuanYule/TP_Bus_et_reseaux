@@ -332,3 +332,9 @@ Dans cette sous-partie, il faut faire en sorte que le mouvement du moteur soit p
 ## Conclusion
 Dans cette partie, nous faisons l'union de tous les TPs. Tout d'abord, nous connectons TP1 avec TP4, c'est-à-dire qu'en fonction de la température donnée par le capteur, le moteur tournera. Nous définissons une interruption de timer à une seconde. C'est ensuite dans la fonction d'interruption que la conversion des degrés Celsius en angle de rotation du moteur est effectuée. Voir la ligne [298](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L298) du fichier main.c
 D’apres nous avons vérifer a conection entre le TP1 et TP2. Nous avons envoyer des requetes pour confirmer la transmition et reception des donées. Pour faire ça, nous avons active la reception des donnés avec le DMA, de cette façon on peut recevoir chaque octete qui provient de la Raspberry Pi. La fonction se trouve dans le fichier main.c à la ligne [250](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L250).
+
+En ce qui concerne au TP3, nous avons importé le fichier *fonctions.py* dans le fichier *hello.py*  de cette manière, on a tous les fonctionnalités du serveur flask et les fonctions pour la connexion UART sous la raspberry Pi. 
+Nous avons pu, receve
+
+Ces problèmes sont dus au temps défini pour la réception des données, c'est-à-dire que lorsque le STM32 envoie les données, la fonction de réception prend plus de temps pour les lire.  En gros, nous avons pu recevoir les données, mais nous n'avons pas pu les traiter de la manière la plus appropriée pour une utilisation ultérieure dans le serveur web.
+
