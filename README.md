@@ -166,7 +166,7 @@ En premier temps, nous avons télécharger l'image "Raspberry Pi os" et on l'ins
 Nous avons changé le nom de notre raspberry pour «raspberrypi6».
 
 ### Configuration de l'image
-Apres de la installation nous avons crée deux fichier: ssh (fichier vide) et wpa_supplicant.conf nous avons le rempli avec le code suivante.
+Apres de la installation nous avons crée deux fichier: ssh (fichier vide) et wpa_supplicant.conf nous avons lui  rempli avec le code suivante.
 
 ```
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -178,8 +178,26 @@ network={
  psk="bus_ese"
 }
 ```
-Notre adresse IP est 192.168.88.247 et à partir d'elle nous pouvons se connecter avec des protocols SSH. La commande suivante montre la manière avec laquelle on se connecte à la raspberry.
-``` ramos@192.168.88.247 ```
+Les modifications pour activer les GPIO et pourt configurer la vitesse du port UART du RasberryPi sont étés fait à partir de lignes de commandes suivantes, respectivement.
+```
+//Dans le fichier config.txt
+enable_uart=1
+dtoverlay=disable-bt
+//Configurtion UART, fichier cmdline on retirer l'option:
+console=serial0,115200
+```
+Notre adresse IP est 192.168.88.247 et à partir d'elle nous pouvons se connecter avec des protocols SSH. La commande suivante montre la manière avec laquelle on se connecte à la raspberry. ``` ramos@192.168.88.247 ```
+D'apres que nous avons connectés, on execute les commandes suivantes pour mettre à jour des paquets, l'installaion de pyserial et l'installaction de minicom.
+```
+sudo apt update 
+pip3 install pyserial
+sudo apt install minicom   
+```
+### Script en Python pour se communiquer avec le STM32
+
+Nous avons realiser deux fichiers qui permettent de se communiquer avec la STM32 [TP_reseaux.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/TP_reseaux.py) et [foncions.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py). Le premier fichier est une shell qui envoi les caracteres lorsque on tape le clavier. Le fichier «fonctions.py» est le plus important car il contient les fonctions pour les protocoles que s'illuetrent dans le tableau suivante.
+
+
 |   Requête du RPi     |   Réponse du STM    | Commentaire |
 | :------------: |:---------------:| :-----:|
 | GET_T      | T=+12.50_C | Température compensée sur 10 caractères    |

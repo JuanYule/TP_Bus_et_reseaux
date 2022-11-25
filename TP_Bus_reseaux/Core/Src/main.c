@@ -215,41 +215,24 @@ BMP280_U32_t bmp280_compensate_P_int32(BMP280_S32_t adc_P)
 BMP280_S32_t read_temp()
 {
 	uint8_t addr_temp_press = 0xF7;
-	//On uilise 6 posiion car des addres pour la press sont 0XF7, 0XF8, 0XF9 et pour la temp sont 0XFA, 0XFB, 0XFC
-	//Donc on as besoin de 6 octects pour stocke les informations
+
 	uint8_t data_temp_press[6];
 	uint32_t temperature;
-	//	uint32_t pressure;
-
 	BMP280_S32_t temp_compensation;
 
 	HAL_I2C_Master_Transmit(&hi2c1, addr_BMP280, &addr_temp_press, 1, HAL_MAX_DELAY);
 	HAL_I2C_Master_Receive(&hi2c1, addr_BMP280, data_temp_press, 6, HAL_MAX_DELAY);
-	//	int i = 0;
-	//	for (i = 0; i < 6; ++i) {
-	//		printf("data = 0x%x \r\n", data_temp_press[i]);
-	//	}
-
-	//On stocke des valeur dans le registre «data_temp_press»
+	
 	temperature = (data_temp_press[3]<<12)|(data_temp_press[4]<<4)|(data_temp_press[5]>>4);
 
-	//	printf("Valeur de la pression = 0x%lx, deci = %d \n\r",pressure, pressure);
-	//	printf("Valeur de la temperature = 0x%lx, deci = %d \n\r",temperature, temperature);
 
-	//	press_compensation=bmp280_compensate_P_int32(pressure);
 	temp_compensation = bmp280_compensate_T_int32(temperature);
 	//printf("T=+%2d.%2d_C \r\n",(int)(temp_compensation/100),temp_compensation%100);
-
 	return temp_compensation;
-	//	printf("Pressure value compensated = %d.%d hPa\n\r",(int)(press_compensation/100),(press_compensation%100));
-	//	printf("Temperature value compensated = %d.%d_C\n\r",(int)(temp_compensation/100),temp_compensation%100);;
-	//	return temp_compensation;
 }
 BMP280_U32_t read_press()
 {
 	uint8_t addr_temp_press = 0xF7;
-	//On uilise 6 posiion car des addres pour la press sont 0XF7, 0XF8, 0XF9 et pour la temp sont 0XFA, 0XFB, 0XFC
-	//Donc on as besoin de 6 octects pour stocke les informations
 	uint8_t data_temp_press[6];
 	uint32_t pressure;
 	BMP280_U32_t press_compensation;
@@ -257,12 +240,7 @@ BMP280_U32_t read_press()
 
 	HAL_I2C_Master_Transmit(&hi2c1, addr_BMP280, &addr_temp_press, 1, HAL_MAX_DELAY);
 	HAL_I2C_Master_Receive(&hi2c1, addr_BMP280, data_temp_press, 6, HAL_MAX_DELAY);
-	//	int i = 0;
-	//	for (i = 0; i < 6; ++i) {
-	//		printf("data = 0x%x \r\n", data_temp_press[i]);
-	//	}
 
-	//On stocke des valeur dans le registre «data_temp_press»
 	pressure = (data_temp_press[0]<<12)|(data_temp_press[1]<<4)|(data_temp_press[2]>>4);
 	press_compensation=bmp280_compensate_P_int32(pressure);
 	printf("P=%10dPa \r\n", (int)(press_compensation/100));
