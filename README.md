@@ -108,7 +108,7 @@ Ainsi, la chaine de caractère "hello" s'affichait toutes les secondes dans le t
 On utilise les fonctions Transmit et Receive de la bibliothèque HAL pour réaliser la communication I²C. Il faut tout de même faire attention à l'adresse demandée de 8 bits alors que l'adresse I²C est sur 7 bits. Donc il faut décaler l'adresse I²C de 1 vers la gauche lorsqu'on utilise les fonctions HAL.
 
 #### Identification du BMP280
-Dans un premier temps, il faut identifier notre capteur en lisant la valeur du registre ID. Pour cela, il faut envoyer l'adresse du registre ID, 0xD0, et recevoir 1 octet correspondant au contenu du registre, 0x58. Nous avons écrit la fonction *id_BMP280()* qui réalise ces instructions. Ainsi, on transmet la valeur du registre ID avec la fonction *HAL_I2C_Master_Transmit* et on reçoit son contenu avec la fonction *HAL_I2C_Master_Receive* contenant un tableau d'au moins 1 octet. Si la valeur reçue correspond bien à 0x58, c'est qu'on communique bien avec le capteur. Après avoir lancé le programme, on observe la valeur de l'ID :
+Dans un premier temps, il faut identifier notre capteur en lisant la valeur du registre ID. Pour cela, il faut envoyer l'adresse du registre ID, 0xD0, et recevoir 1 octet correspondant au contenu du registre, 0x58. Nous avons écrit la fonction [id_BMP280()](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L129) qui réalise ces instructions. Ainsi, on transmet la valeur du registre ID avec la fonction *HAL_I2C_Master_Transmit* et on reçoit son contenu avec la fonction *HAL_I2C_Master_Receive* contenant un tableau d'au moins 1 octet. Si la valeur reçue correspond bien à 0x58, c'est qu'on communique bien avec le capteur. Après avoir lancé le programme, on observe la valeur de l'ID :
 
 ![valeurID_TP1](/img/valeurIdTP1Setup.png "valeur ID TP1")
 
@@ -136,7 +136,7 @@ Ces bits valent alors 101. Pour configurer le capteur en mode normal, il faut me
 
 ![registreF4Mode_TP1](/img/registreF4_mode.png "registre 0xF4 mode TP1")
 
-Nous avons donc écrit la valeur 0b01010111 qui vaut 0x57 en hexadécimal dans le registre 0xF4. C'est avec la fonction *configBMP280()* que nous avons implémenter l'envoie de l'adresse du registre et sa valeur que nous avons trouvé. Nous avons donc placé ces deux données dans un tableau de 2 valeurs. Puis, nous avons envoyé ce tableau au capteur avec la fonction *HAL_I2C_Master_Transmit*. Enfin, nous avons reçu la nouvelle valeur du registre, 0x57, avec la fonction *HAL_I2C_Master_Receive*.
+Nous avons donc écrit la valeur 0b01010111 qui vaut 0x57 en hexadécimal dans le registre 0xF4. C'est avec la fonction [configBMP280()](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L119) que nous avons implémenter l'envoie de l'adresse du registre et sa valeur que nous avons trouvé. Nous avons donc placé ces deux données dans un tableau de 2 valeurs. Puis, nous avons envoyé ce tableau au capteur avec la fonction *HAL_I2C_Master_Transmit*. Enfin, nous avons reçu la nouvelle valeur du registre, 0x57, avec la fonction *HAL_I2C_Master_Receive*.
 
 #### Récupération de l'étalonnage, de la température et de la pression
 
@@ -144,11 +144,11 @@ Après avoir configuré le capteur BMP280, il faut récupérer les données de l
 
 ![tableauMemoire_TP1](/img/calibrationTP1.png "tableau mémoire TP1")
  
-C'est le registre *calibration* qui nous intéresse ici et son adresse correspond à l'adresse du premier élément du tableau, 0x88. Dans la fonction *etalonnageBMP280()*, on transmet donc cette adresse et on reçoit dans un tableau de 26 éléments, les données de l'étalonnage. Enfin, nous avons mis en forme les données d'étalonnage sous la forme suivante pour le calcul de la compensation :
+C'est le registre *calibration* qui nous intéresse ici et son adresse correspond à l'adresse du premier élément du tableau, 0x88. Dans la fonction [etalonnageBMP280()](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L140), on transmet donc cette adresse et on reçoit dans un tableau de 26 éléments, les données de l'étalonnage. Enfin, nous avons mis en forme les données d'étalonnage sous la forme suivante pour le calcul de la compensation :
 
 ![formatCompensation_TP1](/img/compensation.png "format compensation TP1")
 
-Nous avons effectué des décalages et des casts en mot de 16 bits pour les MSB. Nous avons ensuite effectué une opération bit à bit OU avec les LSB.
+Nous avons effectué des décalages et des casts en mot de 16 bits pour les MSB. Nous avons ensuite effectué une opération binaire OR entre les MSB décalés et les LSB.
 
 #### Calcul des températures et des pressions compensées
 
@@ -320,12 +320,12 @@ Ce qui nous donne un baudrate donc une vitesse de 500kbit/s. Après avoir fait c
 
 ![stepper_motor](/img/stepper_motor.png "stepper_motor")
 
-Ainsi, dans un premier temps nous avons fixé la position interne à 0 avec la fonction *config_CAN_set0()*. Pour cela, on place le moteur pas à pas comme on le souhaite et on met l'identifiant standard, *StdId*, à la valeur 0x62. Nous avons appelé cette fonction une seule fois puis nous l'avons mise en commentaire. La configuration est envoyé au moteur pas à pas via la fonction *HAL_CAN_AddTxMessage*.
+Ainsi, dans un premier temps nous avons fixé la position interne à 0 avec la fonction [config_CAN_set0()](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L332). Pour cela, on place le moteur pas à pas comme on le souhaite et on met l'identifiant standard, *StdId*, à la valeur 0x62. Nous avons appelé cette fonction une seule fois puis nous l'avons mise en commentaire. La configuration est envoyé au moteur pas à pas via la fonction *HAL_CAN_AddTxMessage*.
 
-Ensuite, nous avons configuré la commande par angle avec la fonction *config_CAN()*. Dans celle-ci, nous avons donc mis l'identifiant standard, *StdId*, à la valeur 0x61. En plus de tous les autres paramètres, nous avons créé un tableau *aData* de 2 cases avec les valeurs D0 et D1 du tableau précédent. Ces valeurs permettent de commander la valeur et le signe de l'angle souhaité. Comme on veut faire bouger le moteur toutes les secondes, on utilise un timer, ici TIM13, avec une interruption. Dans sa fonction de callback *HAL_TIM_PeriodElapsedCallback()*, nous avons modifié les valeurs du tableau *aData* pour avoir un angle de 90° donc la valeur 0x5A. A l'aide de la boucle if en commentaire, la première fois qu'on entre dans la boucle, le moteur bouge jusqu'à 90°. La deuxième fois, on écrit la valeur 0 dans le tableau donc le moteur bouge jusqu'à la position 0. Le fonctionnement se répète grâce à la variable *incr* qui vaut 1 pour aller dans le *if* et 0 pour aller dans le *else*.
+Ensuite, nous avons configuré la commande par angle avec la fonction [config_CAN()](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L320). Dans celle-ci, nous avons donc mis l'identifiant standard, *StdId*, à la valeur 0x61. En plus de tous les autres paramètres, nous avons créé un tableau *aData* de 2 cases avec les valeurs D0 et D1 du tableau précédent. Ces valeurs permettent de commander la valeur et le signe de l'angle souhaité. Comme on veut faire bouger le moteur toutes les secondes, on utilise un timer, ici TIM13, avec une interruption. Dans sa fonction de callback [HAL_TIM_PeriodElapsedCallback()](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L298), nous avons modifié les valeurs du tableau *aData* pour avoir un angle de 90° donc la valeur 0x5A. A l'aide de la boucle if en commentaire, la première fois qu'on entre dans la boucle, le moteur bouge jusqu'à 90°. La deuxième fois, on écrit la valeur 0 dans le tableau donc le moteur bouge jusqu'à la position 0. Le fonctionnement se répète grâce à la variable *incr* qui vaut 1 pour aller dans le *if* et 0 pour aller dans le *else*.
 
 ### Interfaçage avec le capteur
 
-Dans cette sous-partie, il faut faire en sorte que le mouvement du moteur soit proportionnel à la valeur du capteur. Pour cela, nous avons modifié la fonction *HAL_TIM_PeriodElapsedCallback()*. En effet,on va lire la valeur de la température, la transformer en entier et la mettre dans la case 2 du tableau *aData* pour commander l'angle. Enfin, on envoie le tableau via la fonction *HAL_CAN_AddTxMessage*.
+Dans cette sous-partie, il faut faire en sorte que le mouvement du moteur soit proportionnel à la valeur du capteur. Pour cela, nous avons modifié la fonction [HAL_TIM_PeriodElapsedCallback()](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L298). En effet,on va lire la valeur de la température, la transformer en entier et la mettre dans la case 2 du tableau *aData* pour commander l'angle. Enfin, on envoie le tableau via la fonction *HAL_CAN_AddTxMessage*.
 
 ## Conclusion
