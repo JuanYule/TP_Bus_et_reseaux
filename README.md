@@ -27,7 +27,7 @@ Pour cette première partie, nous avons réalisé l'interrogation des capteurs p
  4. Les registres contenant l’étalonnage du composant sont à l’adresse 0x88 jusqu'à l’adresse 0xA1.
  5. Les registres contenant la température du composant sont nommés « temp » et sont aux adresses allant de 0xFA à 0xFC. Le format de la donnée est unsigned sur 20 bits, ut[19 :0].
  6. Les registres contenant la pression du composant sont nommés « press » et sont aux adresses allant de 0xF7 à 0xF9. Le format de la donnée est unsigned sur 20 bits, up[19 :0].
- 7. Les fonctions permettant le calcul de la température et de la pression compensées en format entier 32 bits sont à la page 45 et 46 de la datasheet.
+ 7. Les fonctions permettant le calcul de la température et de la pression compensées en format entier 32 bits sont à la page 45 et 46 de la [datasheet](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/bst-bmp280-ds001.pdf).
 
 
  ### Setup du STM32
@@ -150,9 +150,11 @@ C'est le registre *calibration* qui nous intéresse ici et son adresse correspon
 
 Nous avons effectué des décalages et des casts en mot de 16 bits pour les MSB. Nous avons ensuite effectué une opération binaire OR entre les MSB décalés et les LSB.
 
+Pour finir, nous avons effectué la lecture de la température avec la fonction [read_temp()](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L215). Ensuite, pour la lecture de la pression, nous avons réalisé la fonction [read_press()](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L233). Le principe reste le même que précédemment, on envoie l'adresse de la première case mémoire associé au registre contenant les données, ici 0xF7. On reçoit ensuite les valeurs dans un tableau qu'on adapte au nombre de valeurs que l'on veut recevoir, ici 6 octets.
+
 #### Calcul des températures et des pressions compensées
 
-Comment on a fait ça ??
+Pour finir ce TP, nous avons implémenté le code permettant de compenser la température et la pression à l'aide des valeurs de l'étalonnage au format entier 32 bits. Pour cela, on utilise le code des fonctions trouvé dans la [documentation](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/bst-bmp280-ds001.pdf) à la page 45. Le code de la fonction de compensation de la température se trouve [ici](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L174). Le code de la fonction de compensation de la pression se trouve [ici](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/TP_Bus_reseaux/Core/Src/main.c#L186).
 
 
 ## TP2 Interfaçage STM32 - Raspberry
