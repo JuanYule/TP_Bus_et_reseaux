@@ -156,17 +156,18 @@ Comment on a fait ça ??
 
 
 ## TP2 Interfaçage STM32 - Raspberry
-L'objetif principal de ce TP est de configurer les interfaces entre le STM32 et le RaspberyPi 0. La image suivante illustre l'architecture du système.
+L'objectif principal de ce TP est de configurer les interfaces entre le STM32 et le RaspberyPi 0. L'image suivante illustre l'architecture du système.
 
 ![architecture_TP2](/img/architecture_TP2.png "Architecture TP2")
 
 ### Mise en routage du Raspberry PI Zero
-En premier temps, nous avons télécharger l'image "Raspberry Pi os" et on l'installé sur la carte SD grace à l'outil BalenaEtcher.
-
-Nous avons changé le nom de notre raspberry pour «raspberrypi6».
+Dans un premier temps, nous avons téléchargé l'image "Raspberry Pi OS" et nous l'avons installé sur la carte SD grâce à l'outil BalenaEtcher.
+Nous avons ensuite changé le nom de notre raspberry pour «raspberrypi6».
 
 ### Configuration de l'image
-Apres de la installation nous avons crée deux fichier: ssh (fichier vide) et wpa_supplicant.conf nous avons lui  rempli avec le code suivante.
+Après l'installation nous avons créé deux fichiers :
+* ssh (fichier vide)
+* wpa_supplicant.conf contenant le code suivant :
 
 ```
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
@@ -178,7 +179,7 @@ network={
  psk="bus_ese"
 }
 ```
-Les modifications pour activer les GPIO et pourt configurer la vitesse du port UART du RasberryPi sont étés fait à partir de lignes de commandes suivantes, respectivement.
+Les modifications pour activer les GPIO et pour configurer la vitesse du port UART da la RasberryPi ont été fait à partir des lignes de commande suivantes, respectivement.
 ```
 //Dans le fichier config.txt
 enable_uart=1
@@ -186,8 +187,8 @@ dtoverlay=disable-bt
 //Configurtion UART, fichier cmdline on retirer l'option:
 console=serial0,115200
 ```
-Notre adresse IP est 192.168.88.247 et à partir d'elle nous pouvons se connecter avec des protocols SSH. La commande suivante montre la manière avec laquelle on se connecte à la raspberry. ``` ramos@192.168.88.247 ```
-D'apres que nous avons connectés, on execute les commandes suivantes pour mettre à jour des paquets, l'installaion de pyserial et l'installaction de minicom.
+Notre adresse IP est 192.168.88.247 et à partir de celle-ci nous pouvons nous connecter avec des protocoles SSH. La commande suivante montre la façon de se connecter à la raspberry. ``` ramos@192.168.88.247 ```
+Après s'être connectés, on éxecute les commandes suivantes pour mettre à jour des paquets, pour faire l'installation de pyserial et l'installation de minicom.
 ```
 sudo apt update 
 pip3 install pyserial
@@ -195,7 +196,7 @@ sudo apt install minicom
 ```
 ### Script en Python pour se communiquer avec le STM32
 
-Nous avons realiser deux fichiers qui permettent de se communiquer avec la STM32 [TP_reseaux.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/TP_reseaux.py) et [foncions.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py). Le premier fichier est un shell qui envoi les caractères lorsqu'on tape le clavier. Le fichier «fonctions.py» est le plus important, car il contient les fonctions pour les protocoles que s'illustrent dans le tableau suivant.
+Nous avons realisé deux fichiers qui permettent de communiquer avec la STM32 [TP_reseaux.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/TP_reseaux.py) et [foncions.py](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py). Le premier fichier est un shell qui envoie les caractères lorsqu'on les tape sur le clavier. Le fichier «fonctions.py» est le plus important, car il contient les fonctions pour les protocoles que s'illustrent dans le tableau suivant :
 
 |   Requête du RPi     |   Réponse du STM    | Commentaire |
 | :------------: |:---------------:| :-----:|
@@ -205,9 +206,9 @@ Nous avons realiser deux fichiers qui permettent de se communiquer avec la STM32
 | GET_K      | K=12.34000 |   Coefficient K sur 10 caractères          |
 | GET_A      | A=125.7000 |    Angle sur 10 caractères                 |
 
-Les request sont definis entre la ligne [67](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L67) jusqu'à la ligne [97](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L67). D'ailleurs, la fonction pour la transmition des données a été defini entre les lignes [58](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L58)-[65](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L65). Cette fonction permet d'envoyer un seul caractère à la fois à travers de l'UART. 
+Les requêtes sont définis de la ligne [67](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L67) jusqu'à la ligne [97](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L67). D'ailleurs, la fonction pour la transmission des données a été defini entre les lignes [58](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L58)-[65](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L65). Cette fonction permet d'envoyer un seul caractère à la fois à travers de l'UART. 
 
-Pour la reception des donnees nous avons crée la fonction [receptionRx](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L28). Cette fonction permet de recevoir chaque caractère et de les stocker dans une variable.
+Pour la reception des données nous avons créé la fonction [receptionRx](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L28). Cette fonction permet de recevoir chaque caractère et de les stocker dans une variable.
 
 
 ## TP3 Interface REST
