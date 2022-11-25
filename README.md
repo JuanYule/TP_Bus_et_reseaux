@@ -207,6 +207,8 @@ Nous avons realiser deux fichiers qui permettent de se communiquer avec la STM32
 
 Les request sont definis entre la ligne [67](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L67) jusqu'à la ligne [97](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L67). D'ailleurs, la fonction pour la transmition des données a été defini entre les lignes [58](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L58)-[65](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L65). Cette fonction permet d'envoyer un seul caractère à la fois à travers de l'UART. 
 
+Pour la reception des donnees nous avons crée la fonction [receptionRx](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/interface%20REST/fonctions.py#L28). Cette fonction permet de recevoir chaque caractère et de les stocker dans une variable.
+
 
 ## TP3 Interface REST
 Dans cette partie, nous avons implémenté une interface Web sur Raspberry Pi. Tout d'abord, nous procédons à l'intallation et la vérification du serveur Python.
