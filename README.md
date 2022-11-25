@@ -112,7 +112,7 @@ Dans un premier temps, il faut identifier notre capteur en lisant la valeur du r
 
 ![valeurID_TP1](/img/valeurIdTP1Setup.png "valeur ID TP1")
 
-Le numéro d'identification du capteur BMP280 est bien 0x58, comme la documentation l'indique. Nous avons par la suite observé la forme des trames I²C à l'oscilloscope. Les sorties sont en collecteur ouvert, on peut donc voir sur l'oscilloscope que les signaux ne sont pas carrés mais de type RC. C'est-à-dire qu'il y a un temps de montée pour atteindre la valeur à l'état haut. Pour éviter ce comportement et avoir des beaux signaux carrés, il faut ajouter une capacité et une résistance.
+Le numéro d'identification du capteur BMP280 est bien 0x58, comme la [documentation](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/bst-bmp280-ds001.pdf) l'indique. Nous avons par la suite observé la forme des trames I²C à l'oscilloscope. Les sorties sont en collecteur ouvert, on peut donc voir sur l'oscilloscope que les signaux ne sont pas carrés mais de type RC. C'est-à-dire qu'il y a un temps de montée pour atteindre la valeur à l'état haut. Pour éviter ce comportement et avoir des beaux signaux carrés, il faut ajouter une capacité et une résistance.
 
 #### Configuration du BMP280
 
@@ -140,7 +140,7 @@ Nous avons donc écrit la valeur 0b01010111 qui vaut 0x57 en hexadécimal dans l
 
 #### Récupération de l'étalonnage, de la température et de la pression
 
-Après avoir configuré le capteur BMP280, il faut récupérer les données de l'étalonnage et les valeurs de température et de pression. Pour récupérer les données de l'étalonnage, le principe est le même que précédemment. Il faut envoyer l'adresse du registre et ensuite on reçoit l'étalonnage dans un tableau adapté. L'adresse du registre est donnée par la carte mémoire de la documentation du capteur :
+Après avoir configuré le capteur BMP280, il faut récupérer les données de l'étalonnage et les valeurs de température et de pression. Pour récupérer les données de l'étalonnage, le principe est le même que précédemment. Il faut envoyer l'adresse du registre et ensuite on reçoit l'étalonnage dans un tableau adapté. L'adresse du registre est donnée par la carte mémoire de la [documentation](https://github.com/JuanYule/TP_Bus_et_reseaux/blob/main/bst-bmp280-ds001.pdf) du capteur :
 
 ![tableauMemoire_TP1](/img/calibrationTP1.png "tableau mémoire TP1")
  
