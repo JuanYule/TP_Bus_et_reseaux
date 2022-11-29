@@ -1,4 +1,8 @@
 # TP:  Bus et réseaux industriels
+## Auteurs
+Ramos Medina Lizianne
+
+Yule Juan Sebastian
 ### Description
 Le but du TP est d'acquérir les données du capteur BMP280 par le STM32 et ensuite de contrôler ces données par une interface API.
 La figure suivante illustre l'architecture générale du système :
